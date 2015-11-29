@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+	<meta charset="UTF-8"/>
+	<title>Canvas demo</title>
+
+	<script>
+		window.onload = function()
+		{
+			//Notes
+			//1.c.stroke() is needed if you want to give an outline for the ball
+
+			//basic block
+			var canvas = document.getElementById("paper");
+			var c = canvas.getContext("2d");
+			c.fillStyle = "green";
+			c.fillRect(0,0,canvas.width,canvas.height);
+			c.lineWidth = "5"
+			c.strokeStyle = "white"
+			c.strokeRect(0,0,500,650)
+
+			Redraw();
+
+			//box
+			// c.fillStyle="red"
+			// c.fillRect(20,20,50,50)
+
+			//outline of box
+			// c.strokeStyle = "white"
+			// c.lineWidth = 2;
+			// c.strokeRect(20,20,50,50)
+
+			//drawing closed line path
+			// c.strokeStyle="#7e9fc2";
+			// c.lineWidth=5;
+			// c.beginPath();
+			// c.moveTo(100,100);
+			// c.lineTo(150,200);
+			// c.lineTo(200,200);
+			// c.lineTo(200,250);
+			// c.lineTo(100,250);
+			// c.closePath();
+			// c.stroke();
+			// c.fillStyle="white"
+			// c.fill();
+
+			//text
+			// c.fillStyle="white";
+			// c.font = "50 px Helvetica";
+			// c.fillText("hello",300,200)
+
+			//circle
+			// c.beginPath();
+			// c.arc(50,600,20,0,2*MATH.PI,false)
+			// c.stroke();
+
+			//ball
+			var posX = 100;
+			var posY = 600;
+			setInterval(function(){
+				posX += 1;
+				posY -= (550/400);
+
+				Redraw();
+				c.beginPath();
+				c.fillStyle = "yellow"
+				c.arc(posX,posY,12,0,2*Math.PI);
+				c.fill();
+			},5)
+
+			function Redraw()
+			{
+				//court lines
+				c.strokeStyle = "white"
+				c.lineWidth="2";
+				c.beginPath();
+				
+				//main court
+				c.moveTo(50,50)
+				c.lineTo(450,50)
+				c.lineTo(450,600)
+				c.lineTo(50,600)
+				c.closePath()
+
+				//left side lines
+				c.moveTo(100,50)
+				c.lineTo(100,600)
+
+				//right side lines
+				c.moveTo(400,50)
+				c.lineTo(400,600)
+
+				//net line
+				c.moveTo(50,325)
+				c.lineTo(450,325)
+
+				//service line far side
+				c.moveTo(50,212.5)
+				c.lineTo(450,212.5)
+
+				//service line near side
+				c.moveTo(50,437.5)
+				c.lineTo(450,437.5)
+
+				//center
+				c.moveTo(250,212.5)
+				c.lineTo(250,437.5)
+				
+				c.stroke();
+			}
+		}
+	</script>
+
+	<style type="text/css">
+		
+
+	</style>
+
+</head>
+
+<body>
+	<canvas id="paper" width="500" height="650">
+	Go get chrome!...
+	</canvas>	
+</body>
+
+</html>

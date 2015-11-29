@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+	<meta charset="UTF-8"/>
+	<title>Canvas demo</title>
+
+	<script>
+		window.onload = function()
+		{
+			//Notes
+			//1.c.stroke() is needed if you want to give an outline for the ball
+
+			//basic block
+			var canvas = document.getElementById("paper");
+			var c = canvas.getContext("2d");
+			c.fillStyle = "green";
+			c.fillRect(0,0,canvas.width,canvas.height);
+			c.lineWidth = "5"
+			c.strokeStyle = "white"
+			c.strokeRect(0,0,500,650)
+
+			//animation
+			var posX = 0;
+			setInterval(function(){
+				posX += 1;
+				Redraw();
+				c.beginPath();
+				c.arc(posX,340,50,0,2*Math.PI,false);
+				c.fill();
+			},30);
+
+			function Redraw()
+			{
+				c.fillStyle = "black";
+				c.fillRect(0,0,canvas.width,canvas.height);
+				c.fillStyle = "white";
+			}
+		}
+	</script>
+
+	<style type="text/css">
+		
+
+	</style>
+
+</head>
+
+<body>
+	<canvas id="paper" width="500" height="650">
+	Go get chrome!...
+	</canvas>	
+</body>
+
+</html>
