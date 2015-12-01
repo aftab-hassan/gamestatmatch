@@ -1,0 +1,103 @@
+<!--This moves the ball on court, court made by me manually drawing lines-->
+
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8"/>
+    <title>Canvas demo</title>
+
+    <script>
+        window.onload = function()
+        {
+            //basic block
+            var canvas = document.getElementById("paper");
+            var c = canvas.getContext("2d");
+
+            Redraw();
+
+            //ball
+            var posX = 100;
+            var posY = 600;
+            setInterval(draw,5)
+
+            function draw ()
+            {
+                //draw
+                Redraw();
+                c.beginPath();
+                c.fillStyle = "yellow"
+                c.arc(posX,posY,12,0,2*Math.PI);
+                c.fill();
+
+                //increment
+                posX += 1;
+                posY -= (550/400);
+            }
+
+            function Redraw()
+            {
+                //clear canvas
+                c.fillStyle = "green";
+                c.fillRect(0,0,canvas.width,canvas.height);
+                c.lineWidth = "5"
+                c.strokeStyle = "white"
+                c.strokeRect(0,0,500,650)
+
+                //court lines
+                c.strokeStyle = "white"
+                c.lineWidth="2";
+                c.beginPath();
+
+                //main court
+                c.moveTo(50,50)
+                c.lineTo(450,50)
+                c.lineTo(450,600)
+                c.lineTo(50,600)
+                c.closePath()
+
+                //left side lines
+                c.moveTo(100,50)
+                c.lineTo(100,600)
+
+                //right side lines
+                c.moveTo(400,50)
+                c.lineTo(400,600)
+
+                //net line
+                c.moveTo(50,325)
+                c.lineTo(450,325)
+
+                //service line far side
+                c.moveTo(50,212.5)
+                c.lineTo(450,212.5)
+
+                //service line near side
+                c.moveTo(50,437.5)
+                c.lineTo(450,437.5)
+
+                //center
+                c.moveTo(250,212.5)
+                c.lineTo(250,437.5)
+
+                c.stroke();
+            }
+        }
+    </script>
+
+    <style type="text/css">
+
+
+    </style>
+
+</head>
+
+<body>
+<canvas id="paper" width="500" height="650">
+    Go get chrome!...
+</canvas>
+</body>
+
+</html>

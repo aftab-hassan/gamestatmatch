@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<canvas id="mycanvas" width="1000" height="1000"></canvas>
+<script>
+    var canvas = document.getElementById("mycanvas");
+    var context = canvas.getContext("2d");
+
+    var posX = 0;
+    var posY = 0;
+    setInterval(draw,50);
+
+    function draw()
+    {
+        //clearing the background
+        context.fillStyle = "white";
+        context.fillRect(0,0,1000,1000);
+
+        //drawing the actual line
+        context.strokeStyle = "yellow";
+        context.lineWidth = "100";
+        context.beginPath();
+        context.moveTo(posX,posY);
+        context.lineTo(posX+1,posY+1);
+        context.stroke();
+
+        //increment
+        posX = posX + 1;
+        posY = posY + 1;
+    }
+</script>
+
+</body>
+</html>
