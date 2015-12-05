@@ -1,0 +1,66 @@
+<!--This moves the ball on court, court made by me manually drawing lines-->
+
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8"/>
+    <title>Canvas demo</title>
+
+    <script>
+        window.onload = function()
+        {
+            //initialize canvas
+            var canvas = document.getElementById("paper");
+            var context = canvas.getContext("2d");
+
+            //ball
+            var posX = 100;
+            var posY = 600;
+
+            //setInterval(draw,5)
+            draw();
+
+            function draw ()
+            {
+                //draw
+                Redraw();
+                context.beginPath();
+                context.fillStyle = "yellow"
+                context.arc(posX,posY,12,0,2*Math.PI);
+                context.fill();
+
+                //increment
+                posX += 1;
+                posY -= (550/400);
+            }
+
+            function Redraw()
+            {
+                var background = new Image();
+                //background.src = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQJzv4nejbTA3k8sWjoJIcx4iN18BLG62ry_rsTxpjb_KWM-o6lHg";
+                background.src = "court2.jpg";
+
+                background.onload = function(){
+                    context.drawImage(background,0,0);
+                }
+            }
+        }
+    </script>
+
+    <style type="text/css">
+
+
+    </style>
+
+</head>
+
+<body>
+<canvas id="paper" width="1000" height="1000">
+    Go get chrome!...
+</canvas>
+</body>
+
+</html>

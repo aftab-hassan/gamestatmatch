@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<canvas id="canvas" width="1000" height="1000"></canvas>
+<script>
+    var canvas = document.getElementById("canvas"),
+            context = canvas.getContext("2d");
+
+    var background = new Image();
+    //background.src = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQJzv4nejbTA3k8sWjoJIcx4iN18BLG62ry_rsTxpjb_KWM-o6lHg";
+    background.src = "court2.jpg";
+
+    background.onload = function(){
+        context.drawImage(background,0,0);
+    }
+</script>
+</body>
+</html>

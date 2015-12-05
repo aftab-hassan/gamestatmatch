@@ -12,51 +12,47 @@
 	<script>
 		window.onload = function()
 		{
-			//adding a comment to test git push
-			var pushtest = 0;
-
 			//Notes
 			//1.c.stroke() is needed if you want to give an outline for the ball
 
 			//basic block
 			var canvas = document.getElementById("paper");
-			var c = canvas.getContext("2d");
-			c.fillStyle = "green";
-			c.fillRect(0,0,canvas.width,canvas.height);
-			c.lineWidth = "5";
-			c.strokeStyle = "white"
-			c.strokeRect(0,0,500,650)
+			var context = canvas.getContext("2d");
 
 			//animation
 			var posX = 0;
-			setInterval(function(){
-				posX += 1;
+			setInterval(draw,30);
+
+			function draw()
+			{
 				Redraw();
-				c.beginPath();
-				c.arc(posX,340,50,0,2*Math.PI,false);
-				c.fill();
-			},30);
+
+				context.fillStyle = "white";
+				context.beginPath();
+				posX += 1;
+				context.arc(posX,340,50,0,2*Math.PI,false);
+				context.fill();
+			}
 
 			function Redraw()
 			{
-				c.fillStyle = "black";
-				c.fillRect(0,0,canvas.width,canvas.height);
-				c.fillStyle = "white";
+				context.fillStyle = "black";
+				context.fillRect(0,0,canvas.width,canvas.height);
 			}
 		}
 	</script>
 
 	<style type="text/css">
-		
+
 
 	</style>
 
 </head>
 
 <body>
-	<canvas id="paper" width="500" height="650">
+<canvas id="paper" width="500" height="650">
 	Go get chrome!...
-	</canvas>	
+</canvas>
 </body>
 
 </html>

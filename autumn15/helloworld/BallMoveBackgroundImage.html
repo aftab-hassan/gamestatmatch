@@ -1,0 +1,71 @@
+<!--this generates the black moving circle-->
+
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8"/>
+    <title>Canvas demo</title>
+
+    <script>
+        window.onload = function()
+        {
+            //Notes
+            //1.context.stroke() is needed if you want to give an outline for the ball
+            //2.If you're drawing an arc, beginPath() and fill are required
+
+            //basic block
+            var canvas = document.getElementById("paper");
+            var context = canvas.getContext("2d");
+            var posX = 200;
+            var posY = 500;
+
+            setInterval(draw,50);
+
+            function draw()
+            {
+                Redraw();
+
+                if(posY < 100 || posX > 650)
+                {
+                    posX = 200;
+                    posY = 500;
+                }
+
+                context.beginPath();
+
+                //set color
+                context.fillStyle = "yellow";
+
+                //actual ball
+                context.arc(posX,posY,12,0,2*Math.PI);
+
+                context.fill();
+
+                posX = posX + 10;
+                posY = posY - 10;
+            }
+
+            function Redraw()
+            {
+                //context.fillStyle = "white";
+                //context.fillRect(0,0,canvas.width,canvas.height);
+
+                context.clearRect(0,0,canvas.width,canvas.height)
+            }
+        }
+    </script>
+
+    <style type="text/css">
+    </style>
+</head>
+
+<body>
+<canvas id="paper" width="1600" height="1200" style="background: url('court2.jpg') no-repeat">
+    Go get chrome!...
+</canvas>
+</body>
+
+</html>
