@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<canvas id="mycanvas" width="1000" height="1000"></canvas>
+
+<script>
+    var canvas = document.getElementById('mycanvas');
+    var context = canvas.getContext('2d');
+
+    var posX = 0;
+    var posY=  500;
+
+    setInterval(draw,50);
+    function draw()
+    {
+        var img = new Image();
+        img.src = "../ball2.jpg"
+
+        img.onload = function()
+        {
+            context.clearRect(0,0,canvas.width,canvas.height);
+            context.drawImage(img,posX,posY);
+
+            //increment
+            posX = posX + 5;
+            posY = posY - 5;
+        }
+    }
+
+</script>
+
+</body>
+</html>

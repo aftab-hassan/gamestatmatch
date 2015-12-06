@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<canvas id="mycanvas" width="1000" height="1000"></canvas>
+<script>
+    var canvas = document.getElementById('mycanvas');
+    var context = canvas.getContext('2d');
+
+    var img = new Image();
+    img.src = "http://o.ooli.ca/person.png";
+
+    wait(function(){
+        context.drawImage(img,0,0)
+    });
+
+</script>
+
+</body>
+</html>

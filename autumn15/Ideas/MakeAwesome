@@ -1,2 +1,6 @@
 1.Use the constellation from http://www.sanwebe.com/2015/01/html5-canvas-examples
 Maybe ball map or something
+2.The part of the court where the ball is bouncing should light up.
+3.Zoom the ball
+4.Upload a video, not a csv file. Silently, it also  uploads a csv file. The page shows the video and the animation side by side
+5.
