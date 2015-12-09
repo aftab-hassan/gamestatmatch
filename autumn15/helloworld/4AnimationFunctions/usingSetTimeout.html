@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<canvas id="mycanvas" width="1000" height="1000"></canvas>
+
+<script>
+    var canvas = document.getElementById('mycanvas')
+    var context = canvas.getContext('2d')
+
+    var posX = 0;
+    var posY = 500;
+
+    draw();
+    //setInterval(draw,60)
+
+    function draw()
+    {
+        var img = new Image();
+        img.src = "../ball1.jpg";
+
+        img.onload = function ()
+        {
+            context.clearRect(0,0,canvas.width,canvas.height);
+            context.drawImage(img,posX,posY);
+        }
+
+        posX += 10;
+        posY -= 10;
+
+        var recsetTimeout = setTimeout(draw,60);
+        if(posX > 300)
+            clearTimeout(recsetTimeout);
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<canvas id="mycanvas" width="1000" height="1000"></canvas>
+
+<script>
+    var canvas = document.getElementById("mycanvas");
+    var context = canvas.getContext("2d");
+
+    var posX = 0;
+    var posY = 500;
+
+    //setInterval(draw,50);
+    draw();
+
+    var recrequestAnimationFrame = 0;
+    function draw()
+    {
+        //recrequestAnimationFrame = requestAnimationFrame(draw);
+        recrequestAnimationFrame = setTimeout(function() {requestAnimationFrame(draw);},100);
+        //recrequestAnimationFrame = setTimeout(requestAnimationFrame(draw),100);
+
+        if(posX == 300)
+            cancelAnimationFrame(recrequestAnimationFrame)
+
+        var img = new Image();
+        img.src = "../ball1.jpg"
+
+        img.onload = function()
+        {
+            context.clearRect(0,0,canvas.width,canvas.height);
+            context.drawImage(img,posX, posY);
+        }
+
+        posX += 10;
+        posY -= 10;
+    }
+
+//    function mycancelAnimationFrame()
+//    {
+//        return window.cancelAnimationFrame || window.mozCancelAnimationFrame;
+//    }
+//
+//    (function() {
+//        alert("hello");
+//        var lastTime = 0;
+//        var vendors = ['ms', 'moz', 'webkit', 'o'];
+//        for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
+//            window.requestAnimationFrame = window[vendors[x]+'RequestAnimationFrame'];
+//            window.cancelAnimationFrame = window[vendors[x]+'CancelAnimationFrame']
+//                    || window[vendors[x]+'CancelRequestAnimationFrame'];
+//        }
+//
+//        if (!window.requestAnimationFrame)
+//            window.requestAnimationFrame = function(callback, element) {
+//                var currTime = new Date().getTime();
+//                var timeToCall = Math.max(0, 16 - (currTime - lastTime));
+//                var id = window.setTimeout(function() { callback(currTime + timeToCall); },
+//                        timeToCall);
+//                lastTime = currTime + timeToCall;
+//                return id;
+//            };
+//
+//        if (!window.cancelAnimationFrame)
+//            window.cancelAnimationFrame = function(id) {
+//                clearTimeout(id);
+//            };
+//    }());
+</script>
+
+</body>
+</html>
