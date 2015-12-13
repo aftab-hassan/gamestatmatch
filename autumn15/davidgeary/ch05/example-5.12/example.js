@@ -204,6 +204,7 @@ function animate() {
       if (now - lastFpsUpdateTime > 1000) {
          lastFpsUpdateTime = now;
          lastFpsUpdate = fps;
+         console.log(lastFpsUpdate.toFixed() + ' fps' + "," + new Date().getSeconds());
       }
       context.fillStyle = 'cornflowerblue';
       context.fillText(lastFpsUpdate.toFixed() + ' fps', 45, 50);

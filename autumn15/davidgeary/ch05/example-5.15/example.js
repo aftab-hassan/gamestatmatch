@@ -40,6 +40,7 @@ var canvas = document.getElementById('canvas'),
     fps = 0,
 
     skyOffset = 0,
+    prevskyOffset = 0,
     SKY_VELOCITY = 30; // 30 pixels/second
 
 // Functions.....................................................
@@ -51,8 +52,11 @@ function erase() {
 function draw() {
    context.save();
 
+   prevskyOffset = skyOffset;
    skyOffset = skyOffset < canvas.width ?
                skyOffset + SKY_VELOCITY/fps : 0;
+
+   console.log(skyOffset, '-'  ,prevskyOffset,'==',skyOffset - prevskyOffset);
 
    context.save();
    context.translate(-skyOffset, 0);
@@ -63,8 +67,22 @@ function draw() {
    context.restore();
 }
 
+/* Every 16ms, requestNextAnimationFrame calls animate
+* frame = program control coming inside requestNextAnimationFrame(animate)
+* Number of frames in 16ms = 1
+* So, number of frame in 1000ms = 1000/16 ~= 62.5
+* So, frame rate is 62.5 frames per second, fps=62.5
+* Which means, requestNextAnimationFrame calls animate 62.5 frames per second
+* ----------------------------------------------------------------
+* Remember : frame MEANS requestNextAnimationFrame CALLING animate
+* ----------------------------------------------------------------
+* */
+
 function calculateFps(now) {
    var fps = 1000 / (now - lastTime);
+
+   //console.log(now-lastTime);
+
    lastTime = now;
    return fps; 
 }

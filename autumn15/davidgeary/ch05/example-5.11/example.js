@@ -187,6 +187,7 @@ function calculateFps() {
    var now = (+new Date),
        fps = 1000 / (now - lastTime);
 
+   console.log(now-lastTime);
    lastTime = now;
 
    return fps;

@@ -47,7 +47,7 @@ var canvas = document.getElementById('canvas'),
          strokeStyle: 'gray',
       },
 
-      { 
+      {
          x: 50,
          y: 150,
          lastX: 50,
@@ -61,7 +61,7 @@ var canvas = document.getElementById('canvas'),
          strokeStyle: 'blue'
       },
 
-      { 
+      {
          x: 150,
          y: 75,
          lastX: 150,
