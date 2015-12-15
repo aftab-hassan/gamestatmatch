@@ -49,6 +49,7 @@ function drawImage() {
 
    context.clearRect(0,0,canvas.width,canvas.height);
    context.drawImage(image, -sw/2 + w/2, -sh/2 + h/2, sw, sh);
+   console.log("arg1:",-sw/2 + w/2,"arg2:",-sh/2 + h/2,"arg3:",sw,"arg4:",sh)
 }
 
 function drawScaleText(value) { 
