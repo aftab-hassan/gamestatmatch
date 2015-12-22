@@ -61,8 +61,7 @@ function drawScaled() {
    // scale, back into itself. Note that the source and
    // destination canvases are the same canvas.
    
-   context.drawImage(canvas, 0, 0, canvas.width, canvas.height,
-                        -sw/2 + w/2, -sh/2 + h/2, sw, sh);
+   context.drawImage(canvas, 0, 0, canvas.width, canvas.height, -sw/2 + w/2, -sh/2 + h/2, sw, sh);
 }
 
 function drawScaleText(value) { 
