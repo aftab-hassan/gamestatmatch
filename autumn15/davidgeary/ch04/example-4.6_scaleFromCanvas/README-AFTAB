@@ -11,4 +11,6 @@
           c.Nothing is affected in the offscreen canvas, it remains the same (default image and text size), throughout
           the lifetime of the application
 
+Remember : To actually draw into a canvas, you need to use context. and do something. Till then it's only a container
+
 If it was only about scaling an image, you could just do like 4.4
