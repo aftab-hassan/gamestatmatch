@@ -9,7 +9,7 @@
     </style>
   </head>
   <body>
-    <canvas id="myCanvas" width="1000" height="1000" style="background: url('./court.jpeg')"></canvas>
+    <canvas id="myCanvas" width="1000" height="1000" style="background: url('court.jpeg')"></canvas>
     <script>
 	  var canvas = document.getElementById('myCanvas');
 	  var context = canvas.getContext('2d');
@@ -25,6 +25,8 @@
 			setInterval(function(){
 				posX -= 1;
 				posY -= 2.2;
+
+                context.clearRect(0,0,canvas.width,canvas.height);
 
 				//Redraw();
 				context.beginPath();

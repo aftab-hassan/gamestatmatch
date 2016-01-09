@@ -72,10 +72,10 @@ function draw()
         context.fill();
         context.restore();
 
-        if((disc.posX+disc.radius == canvas.width) || (disc.posX+disc.radius == 25))
+        if((disc.posX+disc.radius >= canvas.width) || (disc.posX+disc.radius <= 25))
             disc.incrementX = -disc.incrementX;
 
-        if((disc.posY+disc.radius == canvas.height) || (disc.posY+disc.radius == 25))
+        if((disc.posY+disc.radius >= canvas.height) || (disc.posY+disc.radius <= 25))
             disc.incrementY = -disc.incrementY;
 
         disc.posX += disc.incrementX;
