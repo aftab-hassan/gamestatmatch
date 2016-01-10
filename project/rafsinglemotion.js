@@ -34,49 +34,18 @@ var endx;
 var endy;
 
 //driver
+var trajectoryoneover = 0;
 var balltracker;
 
-for(var i=0;i<2;i++)
-{
-    if(i == 0)
-    {
-        console.log("starting balltracker 1")
-        startx = 325;
-        starty = 81;
-        endx = 690;
-        endy = 325;
-        balltracker = requestAnimationFrame(balltrajectoryupdown)
-        console.log("finished balltracker 1");
-    }
-    else if(i == 1)
-    {
-        //console.log("starting balltracker 2")
-        //startx = 690;
-        //starty = 325;
-        //endx = 525;
-        //endy = 90;
-        //balltracker = requestAnimationFrame(balltrajectorydownup)
-        //console.log("finished balltracker 2");
-    }
-}
+startx = 325;
+starty = 81;
+endx = 690;
+endy = 325;
+balltracker = requestAnimationFrame(balltrajectory)
+console.log("finished balltracker 1");
 
-function balltrajectoryupdown()
+function balltrajectory()
 {
-    console.log("inside balltrajectoryupdown")
-    balltrajectory("updown")
-}
-
-function balltrajectorydownup()
-{
-    console.log("inside balltrajectorydownup")
-    balltrajectory("downup");
-}
-
-function balltrajectory(direction)
-{
-    console.log("running... direction=="+direction.toString())
-    console.log(posX + " " + posY)
-
     //endx-startx should be the distance covered across the entire duration
     //duration = x frames
     //so basically in x frames, endx-startx should be the distance covered
@@ -115,43 +84,21 @@ function balltrajectory(direction)
     }
 
     //ending the ball trajectory
-    if(direction == "updown")
+    if( posX < endx && posY < endy )
     {
-        if( posX < endx && posY < endy )
-        {
-            balltracker = requestAnimationFrame(balltrajectoryupdown)
-            context.arc(posX, posY,8, 0, 2*Math.PI)
-            context.fill();
+        balltracker = requestAnimationFrame(balltrajectory)
+        context.arc(posX, posY,8, 0, 2*Math.PI)
+        context.fill();
 
-        }
-
-        else
-        {
-            //cancelAnimationFrame
-            posX = posY = -1;
-            trajectoryoneover = 1;
-            cancelAnimationFrame(balltracker)
-        }
     }
+
     else
     {
-        if( posX >= endx && posY >= endy )
-        {
-            balltracker = requestAnimationFrame(balltrajectorydownup)
-            context.arc(posX, posY,8, 0, 2*Math.PI)
-            context.fill();
-
-        }
-
-        else
-        {
-            //cancelAnimationFrame
-            posX = posY = -1;
-            trajectoryoneover = 1;
-            cancelAnimationFrame(balltracker)
-        }
+        //cancelAnimationFrame
+        posX = posY = -1;
+        trajectoryoneover = 1;
+        cancelAnimationFrame(balltracker)
     }
-
 }
 
 //for (var i = 0; i < 2; i++)

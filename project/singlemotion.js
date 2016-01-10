@@ -79,7 +79,8 @@ function ball1()
     }
 
     //ending the ball trajectory
-    if(posX < startx || posX > endx || posY < starty || posY > endy )
+    //if(posX < startx || posX > endx || posY < starty || posY > endy )
+    if(posX > endx || posY > endy )
     {
         clearInterval(ball1tracker)
         posX = posY = -1;
