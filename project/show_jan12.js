@@ -88,8 +88,7 @@ function balltrajectory(direction)
     timeinterval = currenttime - previoustime;
     previoustime = currenttime;
     fps = 1000/timeinterval;
-    //fps /= 10
-    //fps *= 10
+    fps += 20;
     //console.log("fps=="+fps)
 
     incx = (endx - startx)/fps;
