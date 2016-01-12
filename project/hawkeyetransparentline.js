@@ -72,6 +72,7 @@ function balltrajectory(direction)
     context.globalAlpha = 0.30;
     context.strokeStyle = '#FFFF9e'
     context.lineWidth = 15;
+    context.lineCap = 'round';
     context.beginPath();
     context.moveTo(startx,starty)
     context.lineTo(posx,posy+4)
