@@ -26,7 +26,8 @@ Animation.prototype.drawFrame = function (tick, ctx, x, y) {
     xindex = frame % 5;
     yindex = Math.floor(frame / 5);
 
-    console.log(frame + " " + xindex + " " + yindex);
+    //console.log("commenting out Chris' code")
+    //console.log(frame + " " + xindex + " " + yindex);
 
     ctx.drawImage(this.spriteSheet,
                  xindex * this.frameWidth, yindex * this.frameHeight,  // source from sheet
@@ -45,6 +46,7 @@ Animation.prototype.isDone = function () {
 }
 
 function MushroomDude(game, spritesheet) {
+    console.log("came inside MushroomDude")
     this.animation = new Animation(spritesheet, 189, 230, 0.05, 26, true, false);
     this.x = 0;
     this.y = 0;
@@ -58,6 +60,7 @@ MushroomDude.prototype.draw = function () {
 }
 
 MushroomDude.prototype.update = function() {
+    //console.log("came inside MushroomDude.prototype.update")
     this.x += 2;
 }
 
@@ -79,6 +82,7 @@ AM.downloadAll(function () {
     gameEngine.start();
 
     gameEngine.addEntity(new MushroomDude(gameEngine, AM.getAsset("./img/mushroomdude.png")));
+    gameEngine.addEntity(new MushroomDude(gameEngine, AM.getAsset("./img/runningcat.png")));
 
     console.log("All Done!");
 });

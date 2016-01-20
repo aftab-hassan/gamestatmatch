@@ -18,6 +18,8 @@ AssetManager.prototype.downloadAll = function (callback)
 {
     for (var i = 0; i < this.downloadQueue.length; i++)
     {
+        console.log("printing loop counter"+i)
+
         var img = new Image();
         var that = this;
 

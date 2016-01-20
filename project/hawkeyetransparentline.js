@@ -1,6 +1,7 @@
 /**
  * Created by aftab on 1/5/2016.
  */
+//goal : https://www.youtube.com/watch?v=n--DBjOwjs4&feature=youtu.be&t=115
 var canvas = document.getElementById('mycanvas')
 var context = canvas.getContext("2d")
 
