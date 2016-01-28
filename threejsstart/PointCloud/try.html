@@ -1,0 +1,137 @@
+<!DOCTYPE HTML>
+<HTML>
+<HEAD>
+    <SCRIPT src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></SCRIPT>
+    <SCRIPT src="https://rawgithub.com/mrdoob/three.js/master/build/three.js"></SCRIPT>
+    <SCRIPT src="http://threejs.org/examples/js/controls/OrbitControls.js"></SCRIPT>
+</HEAD>
+
+<BODY>
+
+X:
+<INPUT ID="X" TYPE="TEXT"><BR>
+Y:
+<INPUT ID="Y" TYPE="TEXT"><BR>
+Z:
+<INPUT ID="Z" TYPE="TEXT"><BR>
+
+<BUTTON TYPE="BUTTON" ONCLICK="submit()">Submit</BUTTON>
+<DIV ID="container"></DIV>
+
+<SCRIPT>
+
+    var scene,
+            renderer,
+            camera,
+            light,
+            controls ;
+    var geometry,
+            material,
+            mesh ;
+
+    init() ;
+    animate() ;
+
+    function init() {
+
+        // DIMENSIONS
+        var WIDTH = 500, HEIGHT = 300 ;
+
+        // SCENE
+        scene = new THREE.Scene();
+
+        // RENDERER
+        renderer = new THREE.WebGLRenderer() ;
+        renderer.setSize( WIDTH, HEIGHT ) ;
+        renderer.setClearColor( 0xDDDDDD, 1 ) ;
+        renderer.clear() ;
+
+        // MOUNT RENDER
+        // this attaches the rendered scene to the <DIV> element
+        container = document.getElementById('container') ;
+        container.appendChild( renderer.domElement ) ;
+
+        // CAMERA
+        // if points disappear in the distance, then increase FAR
+        var VIEW_ANGLE = 75,
+                ASPECT = WIDTH / HEIGHT,
+                NEAR = 0.1, FAR = 1000000;
+        camera = new THREE.PerspectiveCamera( VIEW_ANGLE, ASPECT, NEAR, FAR );
+        camera.position.set( 0, 100, 0 );
+        scene.add( camera ) ;
+
+        // LIGHT
+        light = new THREE.PointLight( 0xFFFFFF );
+        light.position.set( 0, 100, 100 ) ;
+        scene.add( light );
+
+        // CONTROLS
+        controls = new THREE.OrbitControls( camera, renderer.domElement ) ;
+
+    }
+
+    function animate() {
+        requestAnimationFrame( animate ) ;
+        update() ;
+        render() ;
+    }
+
+    function update() {
+        controls.update()
+    }
+
+    function render() {
+        renderer.render( scene, camera ) ;
+    }
+
+    function submit() {
+        addpoints() ;
+        update() ;
+        render() ;
+    }
+
+    function addpoints() {
+
+        // grab data from the INPUT elements
+        var x = grab_float_data( "X" ) ;
+        var y = grab_float_data( "Y" ) ;
+        var z = grab_float_data( "Z" ) ;
+
+        // loop through the points and add them to the scene
+        for( var i=0 ; i < z.length ; i++ ) {
+
+            // geometry describes the shape
+            geometry = new THREE.SphereGeometry( 24, 16, 16 ) ;
+
+            // material describes the surface of the shape
+            material = new THREE.MeshLambertMaterial( { color:0x00CCFF } ) ;
+
+            // mesh maps the material onto the geometry to make an object
+            mesh = new THREE.Mesh( geometry, material ) ;
+
+            // position the mesh in space
+            mesh.position.set( x[i], y[i], z[i] ) ;
+
+            // add the mesh to the scene
+            scene.add( mesh ) ;
+        }
+    }
+
+    function grab_float_data( input_id ) {
+
+        // grab the input data and split it by whitespace
+        var val = document.getElementById( input_id ).value.split(" ") ;
+        var output = new Array() ;
+
+        // loop through the values and convert them to floating point numbers
+        for( var i = 0 ; i < val.length ; i++) {
+            output.push( parseFloat( val[i] ) ) ;
+        }
+        return output ;
+    }
+
+</SCRIPT>
+
+</BODY>
+
+</HTML>

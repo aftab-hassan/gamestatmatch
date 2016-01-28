@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>three.js - gpu particle system</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <style>
+        body {
+            background-color: #000000;
+            margin: 0px;
+            overflow: hidden;
+        }
+
+        a {
+            color: #0078ff;
+        }
+
+        .dg {
+            right: auto!important;
+            left: 20px!important;
+        }
+    </style>
+</head>
+
+<body>
+<div style="position: absolute; top: 10px; width: 100%; text-align: center; color:#eee">
+    <a href="http://threejs.org" target="_blank">three.js</a> - GPU particle system plugin by <a href="http://charliehoey.com">Charlie Hoey</a>.</div>
+
+<script src="./three.min.js"></script>
+<script src="./TrackballControls.js"></script>
+<script src="./dat.gui.min.js"></script>
+<script src="./GPUParticleSystem.js" charset="utf-8"></script>
+
+<script>
+    /* AFTAB : 200 and 50 look okay */
+
+    // global variables
+    var renderer;
+    var scene;
+    var camera;
+    var geometry;
+
+    var control;
+
+    var count = 0;
+    var animationTracker;
+
+    var tick = 0,
+            clock = new THREE.Clock(true),
+            controls, container,
+            options, spawnerOptions, particleSystem;
+
+    function init() {
+        container = document.createElement('div');
+        document.body.appendChild(container);
+
+        camera = new THREE.PerspectiveCamera(28, window.innerWidth / window.innerHeight, 1, 10000);
+        camera.position.z = 100;
+
+        scene = new THREE.Scene();
+
+        // The GPU Particle system extends THREE.Object3D, and so you can use it
+        // as you would any other scene graph component.  Particle positions will be
+        // relative to the position of the particle system, but you will probably only need one
+        // system for your whole scene
+        particleSystem = new THREE.GPUParticleSystem({
+            maxParticles: 2000
+        });
+        scene.add( particleSystem);
+
+
+        // options passed during each spawned
+        options = {
+            position: new THREE.Vector3(),
+            positionRandomness: .3,
+            velocity: new THREE.Vector3(),
+            velocityRandomness: .5,
+            color: 0xaa88ff,
+            colorRandomness: .2,
+            turbulence: .5,
+            lifetime: 2,
+            size: 5,
+            sizeRandomness: 1
+        };
+
+        spawnerOptions = {
+            spawnRate: 15000,
+            horizontalSpeed: 1.5,
+            verticalSpeed: 1.33,
+            timeScale: 1
+        }
+
+        renderer = new THREE.WebGLRenderer();
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        container.appendChild(renderer.domElement);
+
+        getSplinePoints();
+    }
+
+
+    function getSplinePoints() {
+        var curve = new THREE.CubicBezierCurve3(
+                new THREE.Vector3( -5, 0, 20 ),
+                new THREE.Vector3(0, 15, 0 ),
+                new THREE.Vector3(0, 15, 0 ),
+                new THREE.Vector3( 2, 0, -10 )
+        );
+
+        geometry = new THREE.Geometry();
+        geometry.vertices = curve.getPoints( 50 );
+        console.log(geometry.vertices[1])
+
+        var material = new THREE.LineBasicMaterial( { color : 0xff0000 } );
+
+        // Create the final Object3d to add to the scene
+        var curveObject = new THREE.Line( geometry, material );
+
+        curveObject.name = "curveObject"
+
+        animate();
+    }
+
+    function animate() {
+        if(count == 50)
+        {
+            cancelAnimationFrame(animationTracker);
+            return;
+        }
+
+        count++;
+        requestAnimationFrame(animate);
+
+        var delta = clock.getDelta() * spawnerOptions.timeScale;
+        tick += delta;
+
+        //if (tick < 0) tick = 0;
+
+        if (delta > 0) {
+            options.position.x = geometry.vertices[count].x;
+            options.position.y = geometry.vertices[count].y;
+            options.position.z = geometry.vertices[count].z;
+
+            for(var i = 0;i<200;i++)
+            {
+                particleSystem.spawnParticle(options);
+            }
+        }
+
+        particleSystem.update(tick);
+
+        console.log("tick=="+tick+"delta=="+delta)
+
+        renderer.render(scene, camera);
+    }
+
+    // calls the init function when the window is done loading.
+    window.onload = init;
+
+</script>
+<body>
+</body>
+</html>

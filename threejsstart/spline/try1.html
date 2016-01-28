@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>02.12 - Spline Curve</title>
+    <script src="./three.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<script>
+
+    // global variables
+    var renderer;
+    var scene;
+    var camera;
+
+    var control;
+
+    function init() {
+
+        // create a scene, that will hold all our elements such as objects, cameras and lights.
+        scene = new THREE.Scene();
+
+        // create a camera, which defines where we're looking at.
+        camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+
+        // create a render, sets the background color and the size
+        renderer = new THREE.WebGLRenderer();
+        renderer.setClearColor(0x000000, 1.0);
+        renderer.setSize(window.innerWidth, window.innerHeight);
+
+        drawSpline();
+
+        // position and point the camera to the center of the scene
+        camera.position.x = 0;
+        camera.position.y = 40;
+        camera.position.z = 40;
+        camera.lookAt(scene.position);
+
+        // add the output of the renderer to the html element
+        document.body.appendChild(renderer.domElement);
+
+
+        // setup the control object for the control gui
+        control = new function () {
+            this.numOfPoints = 100;
+        };
+
+        // call the render function
+        render();
+    }
+
+    function drawSpline(numPoints) {
+        var curve = new THREE.CubicBezierCurve3(
+                new THREE.Vector3( 10, 0, 15 ),
+                new THREE.Vector3( -5, 15, 0 ),
+                new THREE.Vector3( 10, 15, 0 ),
+                new THREE.Vector3( 15, 0, -5 )
+        );
+
+        var geometry = new THREE.Geometry();
+        geometry.vertices = curve.getPoints( 50 );
+
+        var material = new THREE.LineBasicMaterial( { color : 0xff0000 } );
+
+        // Create the final Object3d to add to the scene
+        var curveObject = new THREE.Line( geometry, material );
+
+        curveObject.name = "curveObject"
+        scene.add(curveObject);
+
+    }
+
+    function render() {
+        renderer.render(scene, camera);
+
+        scene.getObjectByName('curveObject').rotation.y += 0.01;
+
+        requestAnimationFrame(render);
+    }
+
+    // calls the init function when the window is done loading.
+    window.onload = init;
+
+</script>
+<body>
+</body>
+</html>
