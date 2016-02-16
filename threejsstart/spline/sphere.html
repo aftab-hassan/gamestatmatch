@@ -1,0 +1,33 @@
+<html>
+    <body>
+       <script src="three.min.js"></script>
+        <script>
+            var renderer = new THREE.WebGLRenderer();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.body.appendChild(renderer.domElement);
+
+            var sphereCamera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000);
+            sphereCamera.position.y = -400;
+            sphereCamera.position.z = 400;
+            sphereCamera.rotation.x = .70;
+
+            var scene = new THREE.Scene();
+
+            var sphere = new THREE.Mesh(new THREE.SphereGeometry(8,31,31), new THREE.MeshLambertMaterial({
+                color: 'yellow',
+            }));
+
+            sphere.position.x = 0;
+            sphere.position.y = 0;
+            sphere.position.z = 0;
+
+            scene.add(sphere);
+
+            var light = new THREE.DirectionalLight('white', 1);
+            light.position.set(0,-400,400).normalize();
+            scene.add(light);
+
+            renderer.render(scene, sphereCamera);
+        </script>
+    </body>
+</html>

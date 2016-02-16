@@ -1,0 +1,20 @@
+1.main()
+{
+ fun1();
+ fun2();
+ fun3();
+}
+
+window.onload = fun1;
+function fun1()
+{
+  --
+  --
+  fun2();
+}
+function fun2()
+{
+  --
+  --
+  fun3();
+}

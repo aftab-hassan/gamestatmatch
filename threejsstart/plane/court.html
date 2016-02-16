@@ -1,0 +1,99 @@
+<html>
+<body>
+<script src="three.min.js"></script>
+
+<script>
+    var camera, scene, renderer;
+    var courtLine;
+    var courtGeometry;
+    var courtMaterial;
+
+    init();
+
+    function init(){
+
+        scene = new THREE.Scene();
+
+        camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 10000);
+        camera.position.set(0,40,40);
+        camera.lookAt(scene.position);
+
+        renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight)
+        document.body.appendChild(renderer.domElement);
+
+        courtGeometry = new THREE.Geometry();
+        courtMaterial = new THREE.LineBasicMaterial({color: 'green'});
+
+        var a = new THREE.Vector3( -15, 10, 20 );
+        var b = new THREE.Vector3( -15, 10, -20 );
+        var c = new THREE.Vector3( -20, 10, 20 );
+        var d = new THREE.Vector3( -20, 10, -20 );
+
+        var e = new THREE.Vector3( 15, 10, 20 );
+        var f = new THREE.Vector3( 15, 10, -20 );
+        var g = new THREE.Vector3( 20, 10, 20 );
+        var h = new THREE.Vector3( 20, 10, -20 );
+
+
+        //left side
+        courtGeometry.vertices.push(a);
+        courtGeometry.vertices.push(b);
+        courtGeometry.vertices.push(c);
+        courtGeometry.vertices.push(d);
+
+        //right side
+        courtGeometry.vertices.push(e);
+        courtGeometry.vertices.push(f);
+        courtGeometry.vertices.push(g);
+        courtGeometry.vertices.push(h);
+
+        //far side baseline
+        courtGeometry.vertices.push(d);
+        courtGeometry.vertices.push(h);
+
+        //near side baseline
+        courtGeometry.vertices.push(c);
+        courtGeometry.vertices.push(g);
+
+//                //middle line horizontal
+//                var i = new THREE.Vector3(-15,10,0)
+//                var j = new THREE.Vector3(15,10,0)
+//                courtGeometry.vertices.push(i);
+//                courtGeometry.vertices.push(j);
+
+        //far side service box
+        var k = new THREE.Vector3(-15,10,-11)
+        var l = new THREE.Vector3(15,10,-11)
+        courtGeometry.vertices.push(k);
+        courtGeometry.vertices.push(l);
+
+        //near side service box
+        var m = new THREE.Vector3(-15,10,11)
+        var n = new THREE.Vector3(15,10,11)
+        courtGeometry.vertices.push(m);
+        courtGeometry.vertices.push(n);
+
+        //middle line vertical
+        var o = new THREE.Vector3(0,10,11)
+        var p = new THREE.Vector3(0,10,-11)
+        courtGeometry.vertices.push(o);
+        courtGeometry.vertices.push(p);
+
+        console.log(courtGeometry.vertices);
+
+        courtLine = new THREE.Line( courtGeometry, courtMaterial, THREE.LinePieces);
+        scene.add(courtLine);
+
+        render();
+    }
+
+
+    function render() {
+
+        renderer.render( scene, camera );
+
+    }
+</script>
+</body>
+</html>

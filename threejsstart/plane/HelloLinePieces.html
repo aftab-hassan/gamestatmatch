@@ -1,0 +1,61 @@
+<html>
+    <body>
+        <script src="three.min.js"></script>
+
+        <script>
+            var camera, scene, renderer;
+
+            init();
+
+            function init(){
+
+                scene = new THREE.Scene();
+
+                camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 10000);
+//                camera.position.set(20,40,50);
+                camera.position.set(0,0,50);
+                camera.lookAt(scene.position);
+
+                renderer = new THREE.WebGLRenderer();
+                renderer.setSize(window.innerWidth, window.innerHeight)
+                document.body.appendChild(renderer.domElement);
+    
+                var size = 50, step = 10;
+
+                var geometry = new THREE.Geometry();
+                var material = new THREE.LineBasicMaterial({color: 'green'});
+
+                var a = new THREE.Vector3( -20, 10, 10 );
+                var b = new THREE.Vector3( -20, 10, 0 );
+                var c = new THREE.Vector3( -30, 10, 10 );
+                var d = new THREE.Vector3( -30, 10, 0 );
+
+//                for ( var i = - size; i <= size; i += step){
+                    geometry.vertices.push(a);
+                    geometry.vertices.push(c);
+                    geometry.vertices.push(b);
+                    geometry.vertices.push(d);
+
+//                    i=-size;
+//                    geometry.vertices.push(new THREE.Vector3( i, - 0.04, - size ));
+//                    geometry.vertices.push(new THREE.Vector3( i, - 0.04, size ));
+
+//                }
+
+                console.log(geometry.vertices);
+
+                var line = new THREE.Line( geometry, material, THREE.LinePieces);
+                scene.add(line);
+ 
+                render();
+            }
+
+
+            function render() {
+
+                renderer.render( scene, camera );
+
+            }
+        </script>
+    </body>
+</html>
