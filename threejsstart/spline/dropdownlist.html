@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<!--select id onchange option value innerHTML-->
+<!--http://www.w3schools.com/jsref/event_onchange.asp-->
+<select id="mydropdownlist" onchange="myfunction()">
+<option value="Wimbledon">Wimbledon</option>
+<option value="French Open">French Open</option>
+</select>
+</body>
+
+<script>
+    function myfunction()
+    {
+        alert("clicked on '"+document.getElementById("mydropdownlist").value + "'")
+    }
+</script>
+
+<style>
+    #mydropdownlist
+    {
+        position:absolute;
+        left:1200px;
+        top:20px
+    }
+</style>
+</html>
