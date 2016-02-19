@@ -20,6 +20,10 @@
     var animationTracker;
     var container;
 
+    //floor
+    var floormesh=null;
+    var floorTexture,floorMaterial,floorGeometry,skyBoxGeometry,skyBoxMaterial,skyBox;
+
     //spline
     var splineGeometry;
 
@@ -237,6 +241,8 @@
     }
 
     function init() {
+        console.log("came inside the init function...")
+
         var SCREEN_WIDTH = window.innerWidth, SCREEN_HEIGHT = window.innerHeight;
         SCREEN_WIDTH-=200;
 //        SCREEN_HEIGHT -= 100;
@@ -254,7 +260,7 @@
 
         // position and point the camera to the center of the scene
         camera.position.x = 0;
-        camera.position.y = 30;
+        camera.position.y = 40;
         camera.position.z = 40;
         camera.lookAt(scene.position);
 
@@ -295,36 +301,8 @@
         //                 right  click to pan
         controls = new THREE.OrbitControls( camera, renderer.domElement );
 
-        ///////////
-        // FLOOR //
-        ///////////
-
-        // note: 4x4 checkboard pattern scaled so that each square is 25 by 25 pixels.
-        //var floorTexture = new THREE.ImageUtils.loadTexture( 'images/checkerboard.jpg' );
-        if(courtselection == "Wimbledon")
-            var floorTexture = new THREE.ImageUtils.loadTexture( 'grass256.jpg' );
-        else if(courtselection == "French Open")/*go with 2 for now*/
-            var floorTexture = new THREE.ImageUtils.loadTexture( 'claycourt2.png' );
-        floorTexture.wrapS = floorTexture.wrapT = THREE.RepeatWrapping;
-        floorTexture.repeat.set( 20, 20 );
-        // DoubleSide: render texture on both sides of mesh
-        var floorMaterial = new THREE.MeshBasicMaterial( { map: floorTexture, side: THREE.DoubleSide } );
-        var floorGeometry = new THREE.PlaneGeometry(110, 110, 1, 1);
-        var floor = new THREE.Mesh(floorGeometry, floorMaterial);
-        floor.position.y = -0.5;
-        floor.rotation.x = Math.PI / 2;
-        scene.add(floor);
-
-        /////////
-        // SKY //
-        /////////
-
-        // make sure the camera's "far" value is large enough so that it will render the skyBox!
-        var skyBoxGeometry = new THREE.CubeGeometry( 1000, 1000, 1000 );
-        // BackSide: render faces from inside of the cube, instead of from outside (default).
-        var skyBoxMaterial = new THREE.MeshBasicMaterial( { color: 0x9999ff, side: THREE.BackSide } );
-        var skyBox = new THREE.Mesh( skyBoxGeometry, skyBoxMaterial );
-        scene.add(skyBox);
+        //Aftab : Floor and sky were here
+        drawFloorAndSky();
 
         ///////////////
         // GAS TRAIL //
@@ -360,7 +338,47 @@
             timeScale: 1
         }
 
-        animate();
+        renderer.render(scene,camera)
+    }
+
+    function drawFloorAndSky()
+    {
+        ///////////
+        // FLOOR //
+        ///////////
+
+        // note: 4x4 checkboard pattern scaled so that each square is 25 by 25 pixels.
+        //var floorTexture = new THREE.ImageUtils.loadTexture( 'images/checkerboard.jpg' );
+        if(courtselection == "Wimbledon")
+            floorTexture = new THREE.ImageUtils.loadTexture( 'grass256.jpg' );
+        else if(courtselection == "French Open")/*go with 2 for now*/
+            floorTexture = new THREE.ImageUtils.loadTexture( 'claycourt2.png' );
+        else if(courtselection == "Australian Open")/*go with 2 for now*/
+            floorTexture = new THREE.ImageUtils.loadTexture( 'australianopencourttexture.jpg' );
+        floorTexture.wrapS = floorTexture.wrapT = THREE.RepeatWrapping;
+        floorTexture.repeat.set( 20, 20 );
+        // DoubleSide: render texture on both sides of mesh
+        floorMaterial = new THREE.MeshBasicMaterial( { map: floorTexture, side: THREE.DoubleSide } );
+        floorGeometry = new THREE.PlaneGeometry(110, 110, 1, 1);
+
+        if(floormesh)
+            scene.remove(floormesh);
+
+        floormesh = new THREE.Mesh(floorGeometry, floorMaterial);
+        floormesh.position.y = -0.5;
+        floormesh.rotation.x = Math.PI / 2;
+        scene.add(floormesh);
+
+        /////////
+        // SKY //
+        /////////
+
+        // make sure the camera's "far" value is large enough so that it will render the skyBox!
+        skyBoxGeometry = new THREE.CubeGeometry( 1000, 1000, 1000 );
+        // BackSide: render faces from inside of the cube, instead of from outside (default).
+        skyBoxMaterial = new THREE.MeshBasicMaterial( { color: 0x9999ff, side: THREE.BackSide } );
+        skyBox = new THREE.Mesh( skyBoxGeometry, skyBoxMaterial );
+        scene.add(skyBox);
     }
 
     //save points in geometry.vertices
@@ -378,6 +396,7 @@
 
     //scheduler loop
     function animate() {
+        //console.log("came inside the animate function...")
         controls.update();
 
         if(over == 0)
@@ -504,11 +523,16 @@
     {
         courtselection = document.getElementById("mydropdownlist").value;
         console.log("clicked on '"+ courtselection + "'")
-        init();
+
+        over = 0;
+        trajectoryCount = -1;
+        count = 50;
+        drawFloorAndSky();
+        animate();
     }
 
     // calls the init function when the window is done loading.
-    //window.onload = init;
+    window.onload = init;
 </script>
 <body>
 <script src="./three.build.min.js"></script>
@@ -540,6 +564,7 @@
 <select id="mydropdownlist" onchange="myfunction()">
     <option value="Wimbledon">Wimbledon</option>
     <option value="French Open">French Open</option>
+    <option value="Australian Open">Australian Open</option>
 </select>
 </body>
 
