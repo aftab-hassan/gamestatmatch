@@ -338,11 +338,15 @@
             timeScale: 1
         }
 
+        //console.log("end of init function, court selection here =="+courtselection)
         renderer.render(scene,camera)
     }
 
     function drawFloorAndSky()
     {
+        console.log("came inside drawFloorAndSky called by init function... court selection=="+courtselection)
+        console.log("line after first debug in drawFloorAndSky...")
+
         ///////////
         // FLOOR //
         ///////////
@@ -350,11 +354,26 @@
         // note: 4x4 checkboard pattern scaled so that each square is 25 by 25 pixels.
         //var floorTexture = new THREE.ImageUtils.loadTexture( 'images/checkerboard.jpg' );
         if(courtselection == "Wimbledon")
+        {
             floorTexture = new THREE.ImageUtils.loadTexture( 'grass256.jpg' );
+            console.log("inside court texture Wimbledon...")
+        }
+
         else if(courtselection == "French Open")/*go with 2 for now*/
+        {
             floorTexture = new THREE.ImageUtils.loadTexture( 'claycourt2.png' );
+            console.log("inside court texture FO...")
+        }
+
         else if(courtselection == "Australian Open")/*go with 2 for now*/
+        {
             floorTexture = new THREE.ImageUtils.loadTexture( 'australianopencourttexture.jpg' );
+            console.log("inside court texture AO...")
+        }
+
+        else
+            console.log("inside court texture NOTHING...")
+
         floorTexture.wrapS = floorTexture.wrapT = THREE.RepeatWrapping;
         floorTexture.repeat.set( 20, 20 );
         // DoubleSide: render texture on both sides of mesh
@@ -368,6 +387,7 @@
         floormesh.position.y = -0.5;
         floormesh.rotation.x = Math.PI / 2;
         scene.add(floormesh);
+        console.log(floormesh)
 
         /////////
         // SKY //
