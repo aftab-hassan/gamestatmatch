@@ -495,6 +495,36 @@
 
         scene.add(sphere);
 
+        if(count == 49)
+        {
+            console.log("count == "+count+"x=="+ splineGeometry.vertices[count].x+"y=="+ splineGeometry.vertices[count].y+"z=="+ splineGeometry.vertices[count].z);
+
+            /* drawing the tempsphere */
+            var tempsphere = new THREE.Mesh(new THREE.SphereGeometry(0.8,31,31), new THREE.MeshLambertMaterial({
+                color: 'black',
+            }));
+
+            tempsphere.position.x = splineGeometry.vertices[count].x;
+            tempsphere.position.y = splineGeometry.vertices[count].y;
+            tempsphere.position.z = splineGeometry.vertices[count].z;
+
+            scene.add(tempsphere);
+        }
+
+//        for(var i = 0;i<trajectoryCount;i++)
+//        {
+//            console.log("i == "+i);
+//            var tempsphere = new THREE.Mesh(new THREE.SphereGeometry(0.8,31,31), new THREE.MeshLambertMaterial({
+//                color: 'black',
+//            }));
+//
+//            tempsphere.position.x = trajectories[i].end.x;
+//            tempsphere.position.y = trajectories[i].end.y;
+//            tempsphere.position.z = trajectories[i].end.z;
+//
+//            scene.add(tempsphere);
+//        }
+
         scene.add(light);
     }
 
