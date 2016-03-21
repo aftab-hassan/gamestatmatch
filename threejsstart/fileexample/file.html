@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<input type="file" id="fileinput" />
+<script type="text/javascript">
+    function readSingleFile(evt) {
+        //Retrieve the first (and only!) File from the FileList object
+        var f = evt.target.files[0];
+
+        if (f) {
+            var r = new FileReader();
+            r.onload = function(e) {
+                var contents = e.target.result;
+                var JSONobj = JSON.parse(contents);
+
+                console.log(JSONobj.trajectories[0].velocity);
+
+//                console.log("file contens == "+contents);
+//                alert( "Got the file.n"
+//                        +"name: " + f.name + "n"
+//                        +"type: " + f.type + "n"
+//                        +"size: " + f.size + " bytesn"
+//                        + "starts with: " + contents.substr(1, contents.indexOf("n"))
+//                );
+            }
+            r.readAsText(f);
+        } else {
+            alert("Failed to load file");
+        }
+    }
+
+    document.getElementById('fileinput').addEventListener('change', readSingleFile, false);
+</script>
+</body>
+
+</html>
+
