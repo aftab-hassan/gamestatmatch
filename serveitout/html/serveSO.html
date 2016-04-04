@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Tennis</title>
+    <link rel="stylesheet" type="text/css" href="../css/home.css">
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+
+    <!--adding the js libraries-->
+    <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r75/three.js"></script>-->
+    <script src="../libraries/three.build.min.js"></script><!-- three.js library-->
+    <script src="../libraries/Detector.js"></script><!--to detect WebGL-->
+    <script src="../libraries/OrbitControls.js"></script><!--to pan mouse-->
+    <script src="../libraries/THREEx.FullScreen.js"></script><!--full screen on pressing 'm'-->
+    <script src="../libraries/THREEx.WindowResize.js"></script><!--window resize-->
+    <script src="../libraries/gastrailjs/TrackballControls.js"></script><!--gas trail-->
+    <script src="../libraries/gastrailjs/dat.gui.min.js"></script> <!-- dashboardish UI -->
+    <script src="../libraries/gastrailjs/GPUParticleSystem.js" charset="utf-8"></script><!-- gas trail I think -->
+    <script src="../js/helper.js"></script>
+    <!--<script src="../js/testcube.js"></script>-->
+</head>
+<body>
+
+<div id="title" class="row">
+    <!--<div id="prev">-->
+
+    <!--</div>-->
+    <!--<div class="ball">-->
+    <!--<svg class="ball-svg" viewbox="0 0 100 100" preserveAspectRatio="xMidYMid meet">-->
+    <!--<circle cx="50" cy="50" r="25" />-->
+    <!--</svg>-->
+    <!--</div>-->
+    <div id="tennis">SERVE DIRECTION</div>
+    <!--<div class="ball">-->
+    <!--<svg class="ball-svg" viewbox="0 0 100 100" preserveAspectRatio="xMidYMid meet">-->
+    <!--<circle cx="50" cy="50" r="25" />-->
+    <!--</svg>-->
+    <!--</div>-->
+    <!--<div id="next">-->
+
+    <!--</div>-->
+</div>
+<div id="court" class="row">
+    <div>
+        <p>Upload a csv file</p><br>
+        <input type="file" id="myFile"/>
+    </div>
+    <div>
+        <p>Select player from list</p><br>
+        <select id="playerselect" name="playerselect" onchange="updateSelection('player')">
+            <option selected="true" style="display:none;">Select player</option>
+            <option value="Marat Safin">Marat Safin</option>
+            <option value="Radek Stepanek">Radek Stepanek</option>
+        </select>
+    </div>
+    <div>
+        <p>Select type of serve</p><br>
+        <select id="serveselect" name="serveselect" onchange="updateSelection('servefirstsecond')">
+            <option selected="true" style="display:none;">Select serve</option>
+            <option value="firstserve">First Serve</option>
+            <option value="secondserve">Second Serve</option>
+        </select>
+    </div>
+    <div>
+        <svg id="tennis-court" >
+
+            <svg onclick="updateSelection('Deuce')">
+                <rect x="20" y="35" width="30" height="30" />
+                <text x="21" y="50" >Deuce</text>
+                <text x="15" y="130">Side selection</text>
+            </svg>
+
+            <svg onclick="updateSelection('Ad')">
+                <rect x="50" y="35" width="30" height="30" />
+                <text x="60" y="50" >Ad</text>
+            </svg>
+
+            <path d="M10 10 L10 120 L20 120 L20 10 Z" />
+            <path d="M10 10 L90 10 Z" />
+            <path d="M90 10 L90 120 L80 120 L80 10 Z" />
+            <path d="M90 120 L10 120 Z" />
+            <path d="M10 65 L90 65 Z" />
+            <path d="M10 35 L90 35 Z" />
+            <path d="M10 95 L90 95 Z" />
+            <path d="M50 35 L50 95 Z" />
+
+            <path d="M50 10 L50 15 Z" />
+            <path d="M50 120 L50 115 Z" />
+
+            <!--3 slices 3 slices 3 slices 3 slices 3 slices 3 slices 3 slices 3 slices 3 slices 3 slices 3 slices 3 slices-->
+            <!--3 slices 3 slices 3 slices 3 slices 3 slices 3 slices 3 slices 3 slices 3 slices 3 slices 3 slices 3 slices-->
+            <!--3 slices 3 slices 3 slices 3 slices 3 slices 3 slices 3 slices 3 slices 3 slices 3 slices 3 slices 3 slices-->
+            <svg onclick="updateSelection('Wide')">
+                <rect x="120" y="35" width="10" height="30" />
+                <text x="120" y="50" fill="red">W</text>
+            </svg>
+            <svg onclick="updateSelection('Body')">
+                <rect x="130" y="35" width="15" height="30" />
+                <text x="134" y="50" fill="red">B</text>
+            </svg>
+            <svg onclick="updateSelection('T')">
+                <rect x="145" y="35" width="5" height="30" />
+                <text x="144" y="50" fill="red">T</text>
+                <text x="110" y="130">Direction selection</text>
+            </svg>
+
+            <svg onclick="updateSelection('T')">
+                <rect x="150" y="35" width="15" height="30" />
+                <text x="150" y="50" fill="red">T</text>
+            </svg>
+            <svg onclick="updateSelection('Body')">
+                <rect x="155" y="35" width="15" height="30" />
+                <text x="158" y="50" fill="red">B</text>
+            </svg>
+            <svg onclick="updateSelection('Wide')">
+                <rect x="170" y="35" width="10" height="30" />
+                <text x="169" y="50" fill="red">W</text>
+            </svg>
+
+
+            <path d="M110 10 L110 120 L120 120 L120 10 Z" />
+            <path d="M110 10 L190 10 Z" />
+            <path d="M190 10 L190 120 L180 120 L180 10 Z" />
+            <path d="M190 120 L110 120 Z" />
+            <path d="M110 65 L190 65 Z" />
+            <path d="M110 35 L190 35 Z" />
+            <path d="M110 95 L190 95 Z" />
+            <path d="M150 35 L150 95 Z" />
+
+            <path d="M150 10 L150 15 Z" />
+            <path d="M150 120 L150 115 Z" />
+
+            <!--6 slices 6 slices 6 slices 6 slices 6 slices 6 slices 6 slices 6 slices 6 slices 6 slices-->
+            <!--6 slices 6 slices 6 slices 6 slices 6 slices 6 slices 6 slices 6 slices 6 slices 6 slices-->
+            <!--6 slices 6 slices 6 slices 6 slices 6 slices 6 slices 6 slices 6 slices 6 slices 6 slices        -->
+            <svg onclick="updateSelection('Deuce Wide')">
+                <rect x="220" y="35" width="10" height="30" />
+                <text x="220" y="50" fill="red">W</text>
+            </svg>
+            <svg onclick="updateSelection('Deuce Body')">
+                <rect x="230" y="35" width="15" height="30" />
+                <text x="234" y="50" fill="red">B</text>
+            </svg>
+            <svg onclick="updateSelection('Deuce T')">
+                <rect x="245" y="35" width="5" height="30" />
+                <text x="244" y="50" fill="red">T</text>
+                <text x="220" y="130">Zone selection</text>
+            </svg>
+
+            <svg onclick="updateSelection('Ad T')">
+                <rect x="250" y="35" width="15" height="30" />
+                <text x="250" y="50" fill="red">T</text>
+            </svg>
+            <svg onclick="updateSelection('Ad Body')">
+                <rect x="255" y="35" width="15" height="30" />
+                <text x="258" y="50" fill="red">B</text>
+            </svg>
+            <svg onclick="updateSelection('Ad Wide')">
+                <rect x="270" y="35" width="10" height="30" />
+                <text x="269" y="50" fill="red">W</text>
+            </svg>
+
+            <path d="M210 10 L210 120 L220 120 L220 10 Z" />
+            <path d="M210 10 L290 10 Z" />
+            <path d="M290 10 L290 120 L280 120 L280 10 Z" />
+            <path d="M290 120 L210 120 Z" />
+            <path d="M210 65 L290 65 Z" />
+            <path d="M210 35 L290 35 Z" />
+            <path d="M210 95 L290 95 Z" />
+            <path d="M250 35 L250 95 Z" />
+
+            <path d="M250 10 L250 15 Z" />
+            <path d="M250 120 L250 115 Z" />
+        </svg>
+    </div>
+
+    <div>
+        <svg id="selectionUpdate">
+            <path d="M0 0 L0 100 L280 100 L280 0 Z" />
+            <text id="updateText" x="80" y="50" font-size="20" font-family="tempus sans itc">Make a selection...</text>
+        </svg>
+    </div>
+    <div>
+        <!--<button id = "visualizeBtn" onclick="visualizeServe()">Visualize serve</button>-->
+        <button id = "visualizeBtn" onclick="init2()">Visualize serve</button>
+    </div>
+    <!--<div id="bottom" class="row">-->
+    <!--<div class="ball">-->
+    <!--<svg class="ball-svg" viewbox="0 0 100 100" preserveAspectRatio="xMidYMid meet">-->
+    <!--<circle cx="50" cy="50" r="25" />-->
+    <!--</svg>-->
+    <!--</div>-->
+    <!--<div class="tennis"></div>-->
+    <!--<div class="ball">-->
+    <!--<svg class="ball-svg" viewbox="0 0 100 100" preserveAspectRatio="xMidYMid meet">-->
+    <!--<circle cx="50" cy="50" r="25" />-->
+    <!--</svg>-->
+    <!--</div>-->
+    <!--</div>-->
+    <!--<script type="text/javascript" src="https://code.jquery.com/jquery-2.2.2.min.js"></script>-->
+    <!--<script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>-->
+    <!--<script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>-->
+    <!--<script type="text/javascript" src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>-->
+    <!--<script type="text/javascript" src="js/tennis.js"></script>-->
+    <div id="ThreeJS"></div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,30 @@
+.mainclass{
+    width:60%;
+    height: 50%;
+    background-color: #0A5C2F;
+}
+
+/*#tennis-court path{*/
+    /*stroke-width: 1px;*/
+    /*color: white;*/
+/*}*/
+
+#tennis-court path {
+    stroke: #ffffff;
+    stroke-width: 1.5px;
+    fill:none;
+}
+
+/*#tennis-court rect*/
+/*{*/
+    /*color: white;*/
+/*}*/
+
+#tennis-court rect {
+    fill: gray ;
+    stroke-width: 0.1px;
+}
+
+#tennis-court rect:hover {
+    fill: #ccff00;
+}

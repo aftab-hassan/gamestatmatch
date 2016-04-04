@@ -1,0 +1,71 @@
+.axis path,
+.axis line {
+    fill: none;
+    stroke: black;
+    shape-rendering: crispEdges;
+    stroke-width: 2px;
+}
+
+.axis text {
+    font-family: sans-serif;
+    font-size: 11px;
+}
+
+#options-1-table, #options-2-table {
+	display: table;
+	table-layout: fixed;
+}
+
+.button_gender {
+	display: table-cell;
+	width: calc(100%/3);
+	text-align: center;
+	height: 100%;
+	color: #ffffff;
+	vertical-align: middle;
+	font-size: 1.4rem;
+	line-height: 2rem;
+}
+
+#all-genders {
+	color: rgba(135, 0, 150, 1);
+	background-color: #ffffff;
+	border: 3px solid rgba(135, 0, 150, 1);
+}
+
+#atp {
+	background-color: rgba(0, 0, 150, 1);
+}
+
+#wta {
+	background-color: rgba(135, 0, 0, 1);
+}
+
+.button_place {
+	display: table-cell;
+	width: calc(100%/4);
+	text-align: center;
+	height: 100%;
+	color: #ffffff;
+	vertical-align: middle;
+	font-size: 1.4rem;
+	line-height: 2rem;
+}
+
+#all-places {
+	color: rgba(0, 0, 0, 1);
+	background-color: #ffffff;
+	border: 3px solid rgba(0, 0, 0, 1);
+}
+
+#one {
+	background-color: rgba(217, 164, 65, 1);
+}
+
+#two {
+	background-color: rgba(168, 168, 168, 1);
+}
+
+#three {
+	background-color: rgba(150, 90, 56, 1);
+}
