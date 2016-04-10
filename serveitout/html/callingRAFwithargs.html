@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<script>
+    function animate(i)
+    {
+        console.log("i=="+i);
+        i+=0.01;
+//        requestAnimationFrame(animate(i))
+//        requestAnimationFrame(function(){animate(i)})
+        window.requestAnimationFrame(animate.bind(animate,i));
+    }
+
+    animate(1)
+
+</script>
+</body>
+</html>

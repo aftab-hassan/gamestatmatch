@@ -224,8 +224,8 @@ svg a, svg a:visited, svg a:focus, svg a:hover {
 {
     z-index: 1; position: absolute; left:0px; top:190px;
     /*width:100%;*/
-    width: 1350px;
-    padding: 25px;
+    width: 1320px;
+    padding: 10px;
     border: 5px solid navy;
     margin: 10px;
 }

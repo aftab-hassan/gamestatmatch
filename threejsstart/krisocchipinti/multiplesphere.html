@@ -1,0 +1,56 @@
+<html>
+<body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r75/three.js"></script>
+<script>
+    var renderer, scene, camera;
+    var points = [];
+    var sphere, light;
+
+    renderer = new THREE.WebGLRenderer();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000);
+    camera.position.x = 0;
+    camera.position.y = 30;
+    camera.position.z = 40;
+
+    scene = new THREE.Scene();
+    camera.lookAt(scene.position);
+
+    light = new THREE.DirectionalLight('white', 1);
+    light.position.set(0,10,10).normalize();
+    scene.add(light);
+
+    for(var i = 0;i<10;i++)
+    {
+        points.push(new THREE.Vector3(Math.random() * 5,Math.random() * 5,Math.random() * 5))
+    }
+
+    displaySphere();
+    render();
+
+    function displaySphere()
+    {
+        console.log("came inside displaySphere");
+
+        for(var i = 0;i<points.length;i++)
+        {
+            sphere = new THREE.Mesh(new THREE.SphereGeometry(1,31,31), new THREE.MeshLambertMaterial({
+                color: 'yellow',
+            }));
+
+            sphere.position.x = points[i].x;
+            sphere.position.y = points[i].y;
+            sphere.position.z = points[i].z;
+
+            scene.add(sphere);
+        }
+    }
+
+    function render(){
+        renderer.render(scene, camera);
+    }
+</script>
+</body>
+</html>

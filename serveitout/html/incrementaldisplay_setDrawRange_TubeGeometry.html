@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="http://threejs.org/build/three.min.js"></script>
+    <script src="http://threejs.org/examples/js/controls/OrbitControls.js"></script>
+</head>
+<body>
+<script>
+    var mesh, renderer, scene, camera, controls;
+
+    var nEnd = 0, nMax, nStep = 90; // 30 faces * 3 vertices/face
+    var points = [];
+    var splineGeometry;
+    var animationTracker;
+
+    getData();
+    init();
+    animate();
+    displaySphere();
+
+    //save points in geometry.vertices
+    function getData() {
+//        var curve = new THREE.CubicBezierCurve3(
+//                new THREE.Vector3( -5, 0, 10 ),
+//                new THREE.Vector3(0, 20, 0 ),
+//                new THREE.Vector3(0, 20, 0 ),
+//                new THREE.Vector3( 2, 0, -25 )
+//        );
+//
+//        splineGeometry = new THREE.Geometry();
+//        splineGeometry.vertices = curve.getPoints( 50 );
+
+        var numPoints = 100;
+        var start = new THREE.Vector3(-15, 0, 80);
+        var middle = new THREE.Vector3(0, 50, 20);
+        var end = new THREE.Vector3(5, 0, -5);
+
+        var curveQuad = new THREE.QuadraticBezierCurve3(start, middle, end);
+        var tube = new THREE.TubeGeometry(curveQuad, numPoints, 0.5, 1, false);
+
+        for(var i = 0;i<tube.vertices.length;i++)
+        {
+            if(tube.vertices[i].z <= 25)
+                points.push(new THREE.Vector3(tube.vertices[i].x,tube.vertices[i].y,tube.vertices[i].z));
+        }
+    }
+
+    function init() {
+        // renderer
+        renderer = new THREE.WebGLRenderer();
+        renderer.setSize( window.innerWidth, window.innerHeight );
+        document.body.appendChild( renderer.domElement );
+
+        // scene
+        scene = new THREE.Scene();
+
+        // camera
+        camera = new THREE.PerspectiveCamera( 40, window.innerWidth / window.innerHeight, 1, 1000 );
+        camera.position.set( 0, 30, 40 );
+        scene.add( camera ); //required, since camera has a child light
+
+        // controls
+        controls = new THREE.OrbitControls( camera, renderer.domElement );
+        controls.minDistance = 5;
+        controls.maxDistance = 20;
+
+        // ambient
+        scene.add( new THREE.AmbientLight( 0xffffff, 0.4 ) );
+
+        // light
+        var light = new THREE.PointLight( 0xffffff, 0.5 );
+        light.position.set( 20, 20, 0 );
+        camera.add( light );
+
+        // axes
+        scene.add( new THREE.AxisHelper( 20 ) );
+
+        // points
+//        for ( var i = 0; i < 50; i ++ ) {
+//
+//            points.push( new THREE.Vector3( Math.cos( i * Math.PI / 2 ), i / 9 - 1, Math.sin( i * Math.PI / 2 ) ).multiplyScalar( 3 ) );
+//
+//        }
+
+//        for(var i = 0;i<10;i++)
+//        {
+//            points.push(new THREE.Vector3(Math.floor(Math.random() * 6) + 1  ,Math.floor(Math.random() * 6) + 1  ,Math.floor(Math.random() * 6) + 1  ))
+//        }
+
+//        for(var i=0;i<splineGeometry.vertices.length;i++)
+//        {
+//            points.push(new THREE.Vector3(splineGeometry.vertices[i].x,splineGeometry.vertices[i].y,splineGeometry.vertices[i].z));
+//        }
+        //console.log(points);
+
+        // path
+        var path = new THREE.CatmullRomCurve3( points );
+
+        // params
+        var pathSegments = 512;
+        var tubeRadius = 0.2;
+        var radiusSegments = 8;
+        var closed = false;
+
+        // geometry
+        var geometry = new THREE.TubeGeometry( path, pathSegments, tubeRadius, radiusSegments, closed );
+
+        // to buffer goemetry
+        geometry = new THREE.BufferGeometry().fromGeometry( geometry );
+        nMax = geometry.attributes.position.count;
+
+        // material
+        var material = new THREE.MeshPhongMaterial( {
+            color: 0x00ffff,
+            side: THREE.DoubleSide
+        } );
+
+        // mesh
+        mesh = new THREE.Mesh( geometry, material );
+        scene.add( mesh );
+
+    }
+
+    function animate() {
+
+        animationTracker = requestAnimationFrame( animate );
+
+//        nEnd = ( nEnd + nStep ) % nMax;
+        nEnd = ( nEnd + nStep );
+
+        if(nEnd > nMax)
+        {
+            cancelAnimationFrame(animationTracker);
+            return;
+        }
+
+        mesh.geometry.setDrawRange( 0, nEnd );
+
+        console.log("nEnd=="+nEnd+"nMax=="+nMax);
+
+        renderer.render( scene, camera );
+
+    }
+
+    function displaySphere()
+    {
+        console.log("came inside displaySphere");
+
+        for(var i = 0;i<points.length;i++)
+        {
+            sphere = new THREE.Mesh(new THREE.SphereGeometry(0.2,31,31), new THREE.MeshLambertMaterial({
+                color: 'yellow',
+            }));
+
+            sphere.position.x = points[i].x;
+            sphere.position.y = points[i].y;
+            sphere.position.z = points[i].z;
+
+            scene.add(sphere);
+        }
+    }
+</script>
+</body>
+</html>

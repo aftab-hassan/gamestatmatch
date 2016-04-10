@@ -10,28 +10,20 @@
 //    ga('create', 'UA-23542009-21', 'auto');
 //    ga('send', 'pageview');
 
-/* Global variables required for UI and other non-three.js functions */
-var JSONobj;
-var playerIndex,serveIndex,serveDirection,row;
-
-/* Controllers */
-/* file controller */
-document.getElementById('myFile').addEventListener('change',readSingleFile,false)
-
 /* Selection related UI related functions */
 function updateSelection(selectionmade)
 {
     /* player Selection */
     var playerSelection=document.getElementById("playerselect");
-    playerIndex = playerSelection[playerSelection.selectedIndex].index;
     var playerSelection = playerSelection[playerSelection.selectedIndex].value;
 
-    /* first serve, second serve, both serves Selection */
+    /* first serve, second serve Selection */
     var serveSelection=document.getElementById("serveselect");
-    serveIndex = serveSelection[serveSelection.selectedIndex].index;
     var serveSelection = serveSelection[serveSelection.selectedIndex].value;
 
     /* court Position selection*/
+    var courtPosition;
+
     if(selectionmade == "player")
     {
         document.getElementById('updateText').textContent = playerSelection + "'s serve";
@@ -39,19 +31,15 @@ function updateSelection(selectionmade)
 
     else if(selectionmade == "servefirstsecond")
     {
-        document.getElementById('updateText').textContent = playerSelection + "'s " + serveSelection;
+        document.getElementById('updateText').textContent = playerSelection + "'s " + serveSelection + " serve";
     }
 
     else
     {
-        if(hasUnderscore(selectionmade) == true)
+        if(hasWhiteSpace(selectionmade) == true)
         {
-            console.log("came inside this,selectionmade=="+selectionmade);
-            serveDirection = selectionmade;
-
-            var delimiter = "_";
-            console.log(playerSelection + "'s " + selectionmade.split(delimiter)[1] + " " + serveSelection + " to the " + selectionmade.split(delimiter)[0] + " side")
-            document.getElementById('updateText').textContent = playerSelection + "'s " + selectionmade.split(delimiter)[1] + " " + serveSelection + " to the " + selectionmade.split(delimiter)[0] + " side";
+            console.log(playerSelection + "'s " + selectionmade.split(" ")[1] + " " + serveSelection + " serve" + " to the " + selectionmade.split(" ")[0] + " side")
+            document.getElementById('updateText').textContent = playerSelection + "'s " + selectionmade.split(" ")[1] + " " + serveSelection + " serve" + " to the " + selectionmade.split(" ")[0] + " side";
         }
 
         else
@@ -62,29 +50,9 @@ function updateSelection(selectionmade)
     }
 }
 
-/* function to read file */
-function readSingleFile(evt) {
-    console.log("came inside readSingleFile...");
-
-    //Retrieve the first (and only!) File from the FileList object
-    var f = evt.target.files[0];
-
-    if (f) {
-        var r = new FileReader();
-        r.onload = function(e) {
-            var contents = e.target.result;
-            JSONobj = JSON.parse(contents);
-            //console.log(JSONobj[0].ad_wide);
-        }
-        r.readAsText(f);
-    } else {
-        alert("Failed to load file");
-    }
-}
-
 /* boolean check if a string 's' has white space in it */
-function hasUnderscore(s) {
-    return s.indexOf('_') >= 0;
+function hasWhiteSpace(s) {
+    return s.indexOf(' ') >= 0;
 }
 /*************************************************************************************************************/
 /* Three.js */
@@ -95,7 +63,7 @@ var SCREEN_WIDTH,SCREEN_HEIGHT,scene,camera,renderer,light,container,animationTr
 var courtSelection;
 var floormesh=null,floorTexture,floorMaterial,floorGeometry;//floor
 var skyBoxGeometry,skyBoxMaterial,skyBox;//sky
-var nEnd = 0,nMax,nStep = 120;
+var points = [],mesh,nEnd = 0,nMax,nStep = 120;
 
 /* three.js helper functions */
 
@@ -112,7 +80,7 @@ function workingInitTemplate()
      * 7.light
      * 8.weave together
      * */
-    //console.log("came inside the workingInitTemplate function...")
+    console.log("came inside the init function...")
 
     /* 1.set SCREEN_WIDTH and SCREEN_HEIGHT */
     SCREEN_WIDTH = window.innerWidth-110, SCREEN_HEIGHT = window.innerHeight;
@@ -123,7 +91,7 @@ function workingInitTemplate()
     /* 3.camera */
     camera = new THREE.PerspectiveCamera(45,SCREEN_WIDTH/SCREEN_HEIGHT,0.1,1000);
     camera.position.x = 0;
-    camera.position.y = 30;
+    camera.position.y = 40;
     camera.position.z = 40;
     camera.lookAt(scene.position);
 
@@ -159,8 +127,6 @@ function workingInitTemplate()
 
 function init()
 {
-    console.log("playerIndex=="+playerIndex+",serveIndex=="+serveIndex+",serveDirection=="+serveDirection);
-
     /*
      * 1.set SCREEN_WIDTH and SCREEN_HEIGHT
      * 2.scene
@@ -171,7 +137,7 @@ function init()
      * 7.light
      * 8.weave together
      * */
-    //console.log("came inside the init function...")
+    console.log("came inside the init function...")
 
     /* 1.set SCREEN_WIDTH and SCREEN_HEIGHT */
     SCREEN_WIDTH = window.innerWidth-110, SCREEN_HEIGHT = window.innerHeight;
@@ -182,7 +148,7 @@ function init()
     /* 3.camera */
     camera = new THREE.PerspectiveCamera(45,SCREEN_WIDTH/SCREEN_HEIGHT,0.1,1000);
     camera.position.x = 0;
-    camera.position.y = 20;
+    camera.position.y = 30;
     camera.position.z = 40;
     camera.lookAt(scene.position);
 
@@ -208,19 +174,8 @@ function init()
     resizeWindowAndToggleOnM();
     drawCourt();
     drawFloorAndSky();
-
-    /* serve types
-    [1] "deuce_wide"    "deuce_middle"  "deuce_t"       "ad_wide"       "ad_middle"     "ad_t"          "err_net"
-    [10] "err_wide"      "err_deep"      "err_wide_deep" "err_foot"      "err_unknown" */
-    var row;
-    if(serveIndex == 1)
-        row = playerIndex + " Total";
-    else if(serveIndex == 2)
-        row = playerIndex + " 1";
-    else if(serveIndex == 3)
-        row = playerIndex + " 2";
-    console.log("row=="+row);
-    drawIncrementalTubeAndSphere(row,serveDirection);
+    drawIncrementalTube();
+    displaySphere();
 
     /* 8.weave together */
     container = document.getElementById('ThreeJS')
@@ -261,7 +216,7 @@ function drawLine()
 /* to drawCourt */
 function drawCourt()
 {
-    //console.log("came inside the drawCourt function...");
+    console.log("came inside the drawCourt function...");
     var courtGeometry = new THREE.Geometry();
     var courtMaterial = new THREE.LineBasicMaterial({color: 'white'});
 
@@ -368,16 +323,30 @@ function drawFloorAndSky()
     ///////////
     // note: 4x4 checkboard pattern scaled so that each square is 25 by 25 pixels.
     //var floorTexture = new THREE.ImageUtils.loadTexture( 'images/checkerboard.jpg' );
-    floorTexture = new THREE.ImageUtils.loadTexture( '../images/grass256.jpg' );
+    //floorTexture = new THREE.ImageUtils.loadTexture( '../images/grass256.jpg' );
+    //floorTexture = new THREE.ImageUtils.loadTexture( '../images/grass256.jpg' );
+    //floorTexture.wrapS = floorTexture.wrapT = THREE.RepeatWrapping;
+    //floorTexture.repeat.set( 20, 20 );
+    //// DoubleSide: render texture on both sides of mesh
+    //floorMaterial = new THREE.MeshBasicMaterial( { map: floorTexture, side: THREE.DoubleSide } );
+    //floorGeometry = new THREE.PlaneGeometry(100, 100, 1, 1);
+    //floor = new THREE.Mesh(floorGeometry, floorMaterial);
+    //floor.position.y = -0.5;
+    //floor.rotation.x = Math.PI / 2;
+    //scene.add(floor);
+
+    // ground
+    var loader = new THREE.TextureLoader();
+    var floorTexture = loader.load( "grasslight-big.jpg" );
     floorTexture.wrapS = floorTexture.wrapT = THREE.RepeatWrapping;
     floorTexture.repeat.set( 20, 20 );
-    // DoubleSide: render texture on both sides of mesh
-    floorMaterial = new THREE.MeshBasicMaterial( { map: floorTexture, side: THREE.DoubleSide } );
-    floorGeometry = new THREE.PlaneGeometry(100, 100, 1, 1);
-    floor = new THREE.Mesh(floorGeometry, floorMaterial);
-    floor.position.y = -0.5;
-    floor.rotation.x = Math.PI / 2;
-    scene.add(floor);
+    floorTexture.anisotropy = 16;
+    var floorMaterial = new THREE.MeshPhongMaterial( { color: 0xffffff, specular: 0x111111, map: floorTexture } );
+    var floor = new THREE.Mesh( new THREE.PlaneBufferGeometry( 1000, 1000 ), floorMaterial );
+    floor.position.y = - 0.5;
+    floor.rotation.x = - Math.PI / 2;
+    floor.receiveShadow = true;
+    scene.add( floor );
 
     /////////
     // SKY //
@@ -403,144 +372,69 @@ function visualizeServe()
 
 }
 
-function getTubeData(XCoordinateStart,XCoordinateEnd)
+function getTubeData()
 {
-    console.log("came inside getTubeData...");
-
-    var XCoordinate = (Math.random()*(XCoordinateEnd-XCoordinateStart))+XCoordinateStart;
-    var YCoordinate = (Math.random()*(20-15))+15;
-    var ZCoordinate = ((Math.random() * 10) + 1)*-1
-
     var numPoints = 100;
-    var start;
-    if(XCoordinateStart >= 0 && XCoordinateStart <= 15)
-        start = new THREE.Vector3(-15, 0, 80);
-    else if(XCoordinateStart >= -15 && XCoordinateStart <= 0)
-        start = new THREE.Vector3(15, 0, 80);
-    var middle = new THREE.Vector3(0, YCoordinate, 20);
-    var end = new THREE.Vector3(XCoordinate, 0, ZCoordinate);
+    var start = new THREE.Vector3(-15, 0, 80);
+    var middle = new THREE.Vector3(0, 15, 20);
+    var end = new THREE.Vector3(5, 0, -5);
 
     var curveQuad = new THREE.QuadraticBezierCurve3(start, middle, end);
     var tube = new THREE.TubeGeometry(curveQuad, numPoints, 0.5, 1, false);
 
-    var points = [];
     for(var i = 0;i<tube.vertices.length;i++)
     {
         if(tube.vertices[i].z <= 25)
             points.push(new THREE.Vector3(tube.vertices[i].x,tube.vertices[i].y,tube.vertices[i].z));
     }
     //points = tube.vertices;
-    //console.log("printing tube vertices...")
-    //for(var i = 0;i<tube.vertices.length;i++)
-    //{
-    //    console.log("vertices["+i+"]==("+tube.vertices[i].x+","+tube.vertices[i].y+","+tube.vertices[i].z+")")
-    //}
-
-    console.log("returned points...");
-    return points;
+    console.log("printing tube vertices...")
+    for(var i = 0;i<tube.vertices.length;i++)
+    {
+        console.log("vertices["+i+"]==("+tube.vertices[i].x+","+tube.vertices[i].y+","+tube.vertices[i].z+")")
+    }
 }
 
-/* (Math.random() * 10) + 1,, */
-function drawIncrementalTubeAndSphere(row,serveDirection)
+function drawIncrementalTube()
 {
-    console.log("serveDirection=="+serveDirection)
-    var numServes;
-    var XCoordinateStart,XCoordinateEnd;
-    for(var i = 0; i < JSONobj.length; i++)
-    {
-        if(JSONobj[i].row == row)
-        {
-            numServes = JSONobj[i][serveDirection];
-            break;
-        }
-    }
-    console.log("numServes ==" + numServes);
-
-    /* setting XCoordinate based on  serveDirection */
-    switch (serveDirection) {
-        case 'ad_wide':
-            XCoordinateStart = -15;
-            XCoordinateEnd = -10;
-            break;
-        case 'ad_middle':
-            XCoordinateStart = -10;
-            XCoordinateEnd = -3;
-            break;
-        case 'ad_t':
-            XCoordinateStart = -3;
-            XCoordinateEnd = 0;
-            break;
-        case 'deuce_t':
-            XCoordinateStart = 0;
-            XCoordinateEnd = 3;
-            break;
-        case 'deuce_middle':
-            XCoordinateStart = 3;
-            XCoordinateEnd = 10;
-            break;
-        case 'deuce_wide':
-            XCoordinateStart = 10;
-            XCoordinateEnd = 15;
-            break;
-    }
-
-    //if required, add serveDepth later
-    //switch (serveDepth) {
-    //    case 'deuce_wide':
-    //        XCoordinateStart = -15;
-    //        XCoordinateEnd = -12;
-    //        break;
-    //    case 'ad_wide':
-    //        XCoordinateStart = 12;
-    //        XCoordinateEnd = 15;
-    //        break;
-    //}
-
-
     //gets the points required by the serve's TubeGeometry
-    for(var i =0;i<numServes;i++)
-    {
-        var points = getTubeData(XCoordinateStart,XCoordinateEnd);
+    getTubeData();
 
-        // path
-        var path = new THREE.CatmullRomCurve3( points );
+    // path
+    var path = new THREE.CatmullRomCurve3( points );
 
-        // params
-        var pathSegments = 512;
-        var tubeRadius = 0.2;
-        var radiusSegments = 8;
-        var closed = false;
+    // params
+    var pathSegments = 512;
+    var tubeRadius = 0.1;
+    var radiusSegments = 8;
+    var closed = false;
 
-        // geometry
-        var geometry = new THREE.TubeGeometry( path, pathSegments, tubeRadius, radiusSegments, closed );
+    // geometry
+    var geometry = new THREE.TubeGeometry( path, pathSegments, tubeRadius, radiusSegments, closed );
 
-        // to buffer goemetry
-        geometry = new THREE.BufferGeometry().fromGeometry( geometry );
-        nMax = geometry.attributes.position.count;
+    // to buffer goemetry
+    geometry = new THREE.BufferGeometry().fromGeometry( geometry );
+    nMax = geometry.attributes.position.count;
 
-        // material
-        var material = new THREE.MeshPhongMaterial( {
-            opacity: 0.4,
-            transparent: true,
-            color: 0x00ffff,
-            side: THREE.DoubleSide
-        } );
+    // material
+    var material = new THREE.MeshPhongMaterial( {
+        color: 0x00ffff,
+        side: THREE.DoubleSide
+    } );
 
-        // ambient
-        scene.add( new THREE.AmbientLight( 0xffffff, 0.4 ) );
+    // ambient
+    scene.add( new THREE.AmbientLight( 0xffffff, 0.4 ) );
 
-        // light
-        var light = new THREE.PointLight( 0xffffff, 0.5 );
-        light.position.set( 20, 20, 0 );
-        camera.add( light );
+    // light
+    var light = new THREE.PointLight( 0xffffff, 0.5 );
+    light.position.set( 20, 20, 0 );
+    camera.add( light );
 
-        // mesh
-        var mesh = new THREE.Mesh( geometry, material );
-        scene.add( mesh );
+    // mesh
+    mesh = new THREE.Mesh( geometry, material );
+    scene.add( mesh );
 
-        //animateIncrementalServe();
-        displaySphere(points);
-    }
+    animateIncrementalServe();
 }
 
 function animateIncrementalServe() {
@@ -556,13 +450,13 @@ function animateIncrementalServe() {
     }
 
     mesh.geometry.setDrawRange( 0, nEnd );
-    //console.log("nEnd=="+nEnd+"nMax=="+nMax);
+    console.log("nEnd=="+nEnd+"nMax=="+nMax);
     renderer.render( scene, camera );
 }
 
-function displaySphere(points)
+function displaySphere()
 {
-    //console.log("came inside displaySphere");
+    console.log("came inside displaySphere");
 
     for(var i = 0;i<points.length;i++)
     {

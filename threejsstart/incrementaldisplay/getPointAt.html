@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://rawgit.com/mrdoob/three.js/master/build/three.js"></script>
+    <script src="https://rawgit.com/Wilt/ThreeCSG/master/ThreeCSG.js"></script>
+    <script src="https://rawgit.com/mrdoob/three.js/master/examples/js/controls/OrbitControls.js"></script>
+</head>
+<body>
+
+</body>
+<script>
+    // three.js info box follows shape
+    var renderer, scene, camera;
+    var angle = 0;
+    var points, current = 1,
+            percentage = 70;
+    var mesh;
+
+    init();
+    animate();
+
+    function init() {
+        // info
+        var info = document.createElement('div');
+        info.style.position = 'absolute';
+        info.style.top = '30px';
+        info.style.width = '100%';
+        info.style.textAlign = 'center';
+        info.style.color = '#fff';
+        info.style.fontWeight = 'bold';
+        info.style.backgroundColor = 'transparent';
+        info.style.zIndex = '1';
+        info.style.fontFamily = 'Monospace';
+        info.innerHTML = "three.js - dynamic tube";
+        document.body.appendChild(info);
+
+        // renderer
+        renderer = new THREE.WebGLRenderer({
+            antialias: true
+        });
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // scene
+        scene = new THREE.Scene();
+
+        // ambient light
+        var ambient = new THREE.AmbientLight(0x404040);
+        scene.add(ambient);
+
+        // directional light
+        var directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
+        directionalLight.position.set(-1, -1, 1);
+        scene.add(directionalLight);
+
+        // camera
+        camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 500);
+        camera.position.set(-100, 50, 100);
+        camera.up.set(0, 1, 0);
+        camera.lookAt(new THREE.Vector3(0, 0, 0));
+
+        // controls
+        controls = new THREE.OrbitControls(camera);
+
+        // get curve
+        var curve = getCurve();
+
+        // store all points in points array
+        points = curve.getPoints(100);
+    }
+
+    function getCurve() {
+        //Create a closed bent a sine-like wave
+        var start = new THREE.Vector3(-5, 0, 20),
+                middle = new THREE.Vector3(0, 35, 0),
+                end = new THREE.Vector3(5, 0, -20);
+        return new THREE.QuadraticBezierCurve3(start, middle, end);
+    }
+
+    function animateTube() {
+        current++;
+        if (mesh !== undefined) {
+            scene.remove(mesh);
+        }
+        mesh = createMesh();
+        scene.add(mesh);
+    }
+
+    function createMesh(){
+        var material = getMaterial();
+        var geometry = getGeometry();
+        return new THREE.Mesh(geometry, material)
+    }
+
+    function getMaterial() {
+        return new THREE.MeshPhongMaterial({
+            color: 0xff0000,
+            shading: THREE.FlatShading
+        });
+    }
+
+    function getGeometry() {
+        var curvePath = new THREE.CurvePath();
+        var end, start = points[0];
+        for (var i = 1; i <= current; i++) {
+            end = points[i];
+            lineCurve = new THREE.LineCurve(start, end);
+            curvePath.add(lineCurve);
+            start = end;
+        }
+
+        // geometry
+        var radius = 5,
+                radiusSegments = 8,
+                closed = false;
+        var geometry = new THREE.TubeGeometry(curvePath, percentage, radius, radiusSegments, closed);
+        return geometry;
+    }
+
+    // render
+    function render() {
+        renderer.render(scene, camera);
+    }
+
+    // animate
+    function animate() {
+        requestAnimationFrame(animate);
+        if (current < percentage) {
+            animateTube();
+        }
+        render();
+    }
+
+</script>
+</html>

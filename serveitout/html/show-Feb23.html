@@ -57,8 +57,8 @@
     /*
      1.http://www.w3schools.com/json/json_syntax.asp
 
-     2.var JSONobj.trajectories = [
-     {}, ---> this is actually JSONobj.trajectories[0]
+     2.var trajectories = [
+     {}, ---> this is actually trajectories[0]
      {},
      {}]
 
@@ -66,117 +66,116 @@
 
      4.Inside {}, it's all different, it's like a structure(in C), or like an object
 
-     5.JSONobj.trajectories[0] is that whole thing inside comprising of start,mid and end
+     5.trajectories[0] is that whole thing inside comprising of start,mid and end
      */
     var trajectoryCount = -1;
-    var JSONobj;
-//    var trajectories = [
-//        {
-//            "start":
-//            {
-//                x:-5,
-//                y:0,
-//                z:10
-//            },
-//            "mid" :
-//            {
-//                x:0,
-//                y:20,
-//                z:0
-//            },
-//            "end" :
-//            {
-//                x:5,
-//                y:0,
-//                z:-20
-//            },
-//            "velocity" : 2
-//        },
-//        {
-//            "start":
-//            {
-//                x:5,
-//                y:0,
-//                z:-20
-//            },
-//            "mid" :
-//            {
-//                x:0,
-//                y:20,
-//                z:0
-//            },
-//            "end" :
-//            {
-//                x:12,
-//                y:0,
-//                z:20
-//            },
-//            "velocity" : 2
-//        },
-//        {
-//            "start":
-//            {
-//                x:12,
-//                y:0,
-//                z:20
-//            },
-//            "mid" :
-//            {
-//                x:0,
-//                y:20,
-//                z:0
-//            },
-//            "end" :
-//            {
-//                x:10,
-//                y:5,
-//                z:-10
-//            },
-//            "velocity" : 3
-//        },
-//        {
-//            "start":
-//            {
-//                x:10,
-//                y:5,
-//                z:-10
-//            },
-//            "mid" :
-//            {
-//                x:0,
-//                y:20,
-//                z:0
-//            },
-//            "end" :
-//            {
-//                x:-15,
-//                y:0,
-//                z:15
-//            },
-//            "velocity" : 2
-//        },
-//        {
-//            "start":
-//            {
-//                x:-15,
-//                y:0,
-//                z:15
-//            },
-//            "mid" :
-//            {
-//                x:-10,
-//                y:25,
-//                z:0
-//            },
-//            "end" :
-//            {
-//                x:-15,
-//                y:0,
-//                z:-10
-//            },
-//            "velocity" : 1
-//        }
-//    ];
+    var trajectories = [
+        {
+            "start":
+            {
+                x:-5,
+                y:0,
+                z:10
+            },
+            "mid" :
+            {
+                x:0,
+                y:20,
+                z:0
+            },
+            "end" :
+            {
+                x:5,
+                y:0,
+                z:-20
+            },
+            "velocity" : 2
+        },
+        {
+            "start":
+            {
+                x:5,
+                y:0,
+                z:-20
+            },
+            "mid" :
+            {
+                x:0,
+                y:20,
+                z:0
+            },
+            "end" :
+            {
+                x:12,
+                y:0,
+                z:20
+            },
+            "velocity" : 2
+        },
+        {
+            "start":
+            {
+                x:12,
+                y:0,
+                z:20
+            },
+            "mid" :
+            {
+                x:0,
+                y:20,
+                z:0
+            },
+            "end" :
+            {
+                x:10,
+                y:5,
+                z:-10
+            },
+            "velocity" : 3
+        },
+        {
+            "start":
+            {
+                x:10,
+                y:5,
+                z:-10
+            },
+            "mid" :
+            {
+                x:0,
+                y:20,
+                z:0
+            },
+            "end" :
+            {
+                x:-15,
+                y:0,
+                z:15
+            },
+            "velocity" : 2
+        },
+        {
+            "start":
+            {
+                x:-15,
+                y:0,
+                z:15
+            },
+            "mid" :
+            {
+                x:-10,
+                y:25,
+                z:0
+            },
+            "end" :
+            {
+                x:-15,
+                y:0,
+                z:-10
+            },
+            "velocity" : 1
+        }
+    ];
 
     function drawCourt()
     {
@@ -243,10 +242,6 @@
 
     function init() {
         console.log("came inside the init function...")
-
-        // calls the init function when the window is done loading.
-        document.getElementById('fileinput').addEventListener('change', readSingleFile, false);
-        console.log("fileinput activated...");
 
         var SCREEN_WIDTH = window.innerWidth, SCREEN_HEIGHT = window.innerHeight;
         SCREEN_WIDTH-=200;
@@ -360,19 +355,19 @@
         //var floorTexture = new THREE.ImageUtils.loadTexture( 'images/checkerboard.jpg' );
         if(courtselection == "Wimbledon")
         {
-            floorTexture = new THREE.ImageUtils.loadTexture( '../images/grass256.jpg' );
+            floorTexture = new THREE.ImageUtils.loadTexture( 'grass256.jpg' );
             console.log("inside court texture Wimbledon...")
         }
 
         else if(courtselection == "French Open")/*go with 2 for now*/
         {
-            floorTexture = new THREE.ImageUtils.loadTexture( '../images/claycourt2.png' );
+            floorTexture = new THREE.ImageUtils.loadTexture( 'claycourt2.png' );
             console.log("inside court texture FO...")
         }
 
         else if(courtselection == "Australian Open")/*go with 2 for now*/
         {
-            floorTexture = new THREE.ImageUtils.loadTexture( '../images/australianopencourttexture.jpg' );
+            floorTexture = new THREE.ImageUtils.loadTexture( 'australianopencourttexture.jpg' );
             console.log("inside court texture AO...")
         }
 
@@ -409,10 +404,10 @@
     //save points in geometry.vertices
     function getSplineData() {
         var curve = new THREE.CubicBezierCurve3(
-                new THREE.Vector3( JSONobj.trajectories[trajectoryCount].start.x, JSONobj.trajectories[trajectoryCount].start.y, JSONobj.trajectories[trajectoryCount].start.z ),
-                new THREE.Vector3( JSONobj.trajectories[trajectoryCount].mid.x, JSONobj.trajectories[trajectoryCount].mid.y, JSONobj.trajectories[trajectoryCount].mid.z ),
-                new THREE.Vector3( JSONobj.trajectories[trajectoryCount].mid.x, JSONobj.trajectories[trajectoryCount].mid.y, JSONobj.trajectories[trajectoryCount].mid.z ),
-                new THREE.Vector3( JSONobj.trajectories[trajectoryCount].end.x, JSONobj.trajectories[trajectoryCount].end.y, JSONobj.trajectories[trajectoryCount].end.z )
+                new THREE.Vector3( trajectories[trajectoryCount].start.x, trajectories[trajectoryCount].start.y, trajectories[trajectoryCount].start.z ),
+                new THREE.Vector3( trajectories[trajectoryCount].mid.x, trajectories[trajectoryCount].mid.y, trajectories[trajectoryCount].mid.z ),
+                new THREE.Vector3( trajectories[trajectoryCount].mid.x, trajectories[trajectoryCount].mid.y, trajectories[trajectoryCount].mid.z ),
+                new THREE.Vector3( trajectories[trajectoryCount].end.x, trajectories[trajectoryCount].end.y, trajectories[trajectoryCount].end.z )
         );
 
         splineGeometry = new THREE.Geometry();
@@ -434,7 +429,7 @@
             {
                 trajectoryCount++;
 
-                if(trajectoryCount == JSONobj.trajectories.length)
+                if(trajectoryCount == trajectories.length)
                 {
                     over = 1;
 //                    cancelAnimationFrame(animationTracker);
@@ -466,19 +461,19 @@
                 count += 1;
 
                 //slow
-                if(JSONobj.trajectories[trajectoryCount].velocity == 1)
+                if(trajectories[trajectoryCount].velocity == 1)
                 {
                     animationTracker = setTimeout(animate,1000/30)
                 }
 
                 //normal
-                else if(JSONobj.trajectories[trajectoryCount].velocity == 2)
+                else if(trajectories[trajectoryCount].velocity == 2)
                 {
                     animationTracker = requestAnimationFrame(animate);
                 }
 
                 //fast
-                else if(JSONobj.trajectories[trajectoryCount].velocity == 3)
+                else if(trajectories[trajectoryCount].velocity == 3)
                 {
                     animationTracker = setTimeout(animate,1000/250)
                 }
@@ -523,9 +518,9 @@
 //                color: 'black',
 //            }));
 //
-//            tempsphere.position.x = JSONobj.trajectories[i].end.x;
-//            tempsphere.position.y = JSONobj.trajectories[i].end.y;
-//            tempsphere.position.z = JSONobj.trajectories[i].end.z;
+//            tempsphere.position.x = trajectories[i].end.x;
+//            tempsphere.position.y = trajectories[i].end.y;
+//            tempsphere.position.z = trajectories[i].end.z;
 //
 //            scene.add(tempsphere);
 //        }
@@ -586,51 +581,31 @@
         animate();
     }
 
-    function readSingleFile(evt) {
-        console.log("came inside readSingleFile...");
-
-        //Retrieve the first (and only!) File from the FileList object
-        var f = evt.target.files[0];
-
-        if (f) {
-            var r = new FileReader();
-            r.onload = function(e) {
-                var contents = e.target.result;
-                JSONobj = JSON.parse(contents);
-
-                console.log(JSONobj.trajectories[0].velocity);
-            }
-            r.readAsText(f);
-        } else {
-            alert("Failed to load file");
-        }
-    }
-
+    // calls the init function when the window is done loading.
     window.onload = init;
 </script>
 <body>
-<input type="file" id="fileinput" />
-<script src="../libraries/three.build.min.js"></script>
+<script src="./three.build.min.js"></script>
 
 <!--<script src="js/Three.js"></script>-->
 
 <!--to detect WebGL-->
-<script src="../libraries/Detector.js"></script>
+<script src="js/Detector.js"></script>
 
 <!--to pan mouse-->
-<script src="../libraries/OrbitControls.js"></script>
+<script src="js/OrbitControls.js"></script>
 
 <!--full screen on pressing 'm'-->
-<script src="../libraries/THREEx.FullScreen.js"></script>
+<script src="js/THREEx.FullScreen.js"></script>
 
 <!--window resize-->
-<script src="../libraries/THREEx.WindowResize.js"></script>
+<script src="js/THREEx.WindowResize.js"></script>
 
 <!--gas trail-->
 <!--<script src="./gastrailjs/three.min.js"></script>-->
-<script src="../libraries/gastrailjs/TrackballControls.js"></script>
-<script src="../libraries/gastrailjs/dat.gui.min.js"></script>
-<script src="../libraries/gastrailjs/GPUParticleSystem.js" charset="utf-8"></script>
+<script src="./gastrailjs/TrackballControls.js"></script>
+<script src="./gastrailjs/dat.gui.min.js"></script>
+<script src="./gastrailjs/GPUParticleSystem.js" charset="utf-8"></script>
 
 <div id="ThreeJS" style="z-index: 1; position: absolute; left:0px; top:0px"></div>
 
@@ -645,13 +620,6 @@
 
 <style>
     #mydropdownlist
-    {
-        position:absolute;
-        left:1200px;
-        top:150px
-    }
-
-    #fileinput
     {
         position:absolute;
         left:1200px;
