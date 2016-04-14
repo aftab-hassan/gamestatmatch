@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Tennis</title>
+    <link rel="stylesheet" type="text/css" href="../css/home.css">
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+
+    <!--adding the js libraries-->
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/three.js/r72/three.min.js"></script>
+    <script src="../libraries/Detector.js"></script><!--to detect WebGL-->
+    <script src="../libraries/OrbitControls.js"></script><!--to be able to pan and do controls.update-->
+    <script src="../libraries/THREEx.FullScreen.js"></script><!--full screen on pressing 'm'-->
+    <script src="../libraries/THREEx.WindowResize.js"></script><!--window resize-->
+    <script src="../libraries/gastrailjs/TrackballControls.js"></script><!--gas trail-->
+    <script src="../libraries/gastrailjs/dat.gui.min.js"></script> <!-- dashboardish UI -->
+    <script src="../libraries/gastrailjs/GPUParticleSystem.js" charset="utf-8"></script><!-- gas trail I think -->
+    <script src="../fonts/Digital-7_Regular.js"></script>
+</head>
+<body>
+<div id="ThreeJS"></div>
+</body>
+<script>
+    var animationTracker,count=0;
+    var floormesh=null,floorTexture,floorMaterial,floorGeometry;//floor
+    var skyBoxGeometry,skyBoxMaterial,skyBox;//sky
+    var SCREEN_WIDTH,SCREEN_HEIGHT,scene,camera,renderer,light,container,animationTracker;
+//    var textAnimationCount = 0;
+    init();
+    addTextHelper(0,"PLAYER : ",0,16,0,false);
+    addTextHelper(0,"HELLO : ",0,15,0,false);
+    addText("NOFLICKER : ",0,14,0,true);
+    //renderer.render(scene,camera);
+
+    function generateRandomString(length)
+    {
+        var randomString = "";
+        var wideNumbers = ['2','3','4','5','6','8'];
+        var hexAlphabet = ['A','B','C','D','E','F'];
+        var randomChoice = Math.floor(Math.random()*100);
+        if(randomChoice %2 == 0)
+        {
+            console.log("randomChoice even... == "+randomChoice);
+            for(var i = 0;i<length;i++)
+            {
+//                randomString += Math.floor(Math.random() * 2)
+                randomString += wideNumbers[Math.floor(Math.random() * (wideNumbers.length - 1) )]
+            }
+        }
+        else
+        {
+            console.log("randomChoice odd... "+randomChoice);
+            for(var i = 0;i<length;i++)
+            {
+                randomString += hexAlphabet[Math.floor(Math.random() * (hexAlphabet.length - 1) )]
+            }
+        }
+        return randomString;
+    }
+
+    function addTextHelper(textAnimationCount,text,XCoordinate,YCoordinate,ZCoordinate,persist)
+    {
+//        console.log("text=="+text);
+//        console.log("textAnimationCount=="+textAnimationCount);
+//        console.log("came inside addTextHelper as addTextHelper("+text+","+XCoordinate+","+YCoordinate+","+ZCoordinate+","+persist+")");
+//        textAnimationCount++;
+
+//        console.log("textAnimationCount=="+textAnimationCount);
+        var textBreakpointsArray = [5,10,20,30,70,120,150]
+        if(textBreakpointsArray.indexOf(textAnimationCount) > -1)
+        {
+            if(textAnimationCount == textBreakpointsArray[textBreakpointsArray.length - 1])
+            {
+                addText(text,XCoordinate,YCoordinate,ZCoordinate,true)
+            }
+            else
+            {
+                addText(generateRandomString(text.length),XCoordinate,YCoordinate,ZCoordinate,false)
+            }
+        }
+
+        requestAnimationFrame( function(){addTextHelper(textAnimationCount+1,text,XCoordinate,YCoordinate,ZCoordinate,persist)} );
+    }
+
+    /* adds text given a string */
+    /* Correct call : //addText("PLAYER : ",-25,16,0,true); */
+    function addText(text,XCoordinate,YCoordinate,ZCoordinate,persist)
+    {
+        console.log("came inside addText as addText("+text+","+XCoordinate+","+YCoordinate+","+ZCoordinate+","+persist+")");
+
+        // add 3D text
+        //var materialFront = new THREE.MeshBasicMaterial( { color: 0xff0000 } );
+        //var materialSide = new THREE.MeshBasicMaterial( { color: 0x000088 } );
+        var materialFront = new THREE.MeshBasicMaterial( { color: 'white' } );
+        var materialSide = new THREE.MeshBasicMaterial( { color: 'white' } );
+        var materialArray = [ materialFront, materialSide ];
+
+//	var textGeom = new THREE.TextGeometry( "Hello, World!",
+//			{
+//				size: 1, height: 0.1, curveSegments: 3,
+//				font: fontname, weight:'bold',
+//				bevelThickness: 1, bevelSize: 2, bevelEnabled: false,
+//				material: 0, extrudeMaterial: 1
+//			});
+        var textGeom = new THREE.TextGeometry( text, {
+            font: 'digital-7',size:1,height:0.01
+        });
+
+        var textMaterial = new THREE.MeshFaceMaterial(materialArray);
+        var textMesh = new THREE.Mesh(textGeom, textMaterial );
+
+        textGeom.computeBoundingBox();
+        var textWidth = textGeom.boundingBox.max.x - textGeom.boundingBox.min.x;
+
+        textMesh.position.set( XCoordinate,YCoordinate,ZCoordinate );
+        textMesh.rotation.x = -Math.PI / 4;
+        scene.add(textMesh);
+
+        renderer.render(scene,camera);
+
+        if(persist == false)
+            scene.remove(textMesh);
+    }
+
+    function init()
+    {
+        /*
+         * 1.set SCREEN_WIDTH and SCREEN_HEIGHT
+         * 2.scene
+         * 3.camera
+         * 4.renderer
+         * 5.object(say cube)
+         * 6.object properties
+         * 7.light
+         * 8.weave together
+         * */
+        //console.log("came inside the init function...")
+        //console.log("came inside the config setting part of init function...")
+
+        /* 1.set SCREEN_WIDTH and SCREEN_HEIGHT */
+        SCREEN_WIDTH = window.innerWidth-110, SCREEN_HEIGHT = window.innerHeight;
+
+        /* 2.scene*/
+        scene = new THREE.Scene();
+
+        /* 3.camera */
+        camera = new THREE.PerspectiveCamera(45,SCREEN_WIDTH/SCREEN_HEIGHT,0.1,1000);
+        camera.position.x = 0;
+        camera.position.y = 14;
+        camera.position.z = 45;
+        camera.lookAt(scene.position);
+
+        /* 4.renderer */
+        renderer = new THREE.WebGLRenderer();
+        renderer.setSize(SCREEN_WIDTH,SCREEN_HEIGHT)
+
+        /* 5.object */
+        //cube = new THREE.Mesh(new THREE.CubeGeometry(20,10,10) , new THREE.MeshNormalMaterial(
+        //    {color:'lightblue',wireframe:'true',wireframeLineWidth:'10'}))
+
+        /* 6.object properties */
+        //cube.rotation.z = 0.5;
+        //cube.rotation.y = 0.5;
+        //cube.position.y += 30;
+
+        /* 7.light */
+        light = new THREE.DirectionalLight('white',1);
+        //light.position.set(0,10,10).normalize();
+        light.position.set(20,20,0).normalize();
+
+        /* adding elements to scene */
+        resizeWindowAndToggleOnM();
+        drawCourt();
+        drawFloorAndSky();
+
+        /* 8.weave together */
+        container = document.getElementById('ThreeJS')
+        container.appendChild(renderer.domElement);
+        //scene.add(cube);
+        renderer.render(scene,camera);
+    }
+
+    function resizeWindowAndToggleOnM()
+    {
+        //////////////
+        //// EVENTS //
+        //////////////
+
+        // automatically resize renderer
+        THREEx.WindowResize(renderer, camera);
+        // toggle full-screen on given key press
+        THREEx.FullScreen.bindKey({ charCode : 'm'.charCodeAt(0) });
+    }
+
+    /* actual dimensions - draw court using TubeGeometry (uses drawCourtHelper) */
+    //function drawCourt()
+    //{
+    //    var correctionFactor = 0.5;
+    //
+    //    //left side
+    //    drawCourtHelper(new THREE.Vector3(-13.5*correctionFactor,0*correctionFactor,39.5),new THREE.Vector3(-13.5*correctionFactor,0*correctionFactor,-39.5))
+    //    drawCourtHelper(new THREE.Vector3(-18*correctionFactor,0*correctionFactor,39.5),new THREE.Vector3(-18*correctionFactor,0*correctionFactor,-39.5))
+    //
+    //    //right side
+    //    drawCourtHelper(new THREE.Vector3(13.5*correctionFactor,0*correctionFactor,39.5),new THREE.Vector3(13.5*correctionFactor,0*correctionFactor,-39.5))
+    //    drawCourtHelper(new THREE.Vector3(18*correctionFactor,0*correctionFactor,39.5),new THREE.Vector3(18*correctionFactor,0*correctionFactor,-39.5))
+    //
+    //    //far side baseline
+    //    drawCourtHelper(new THREE.Vector3(-18*correctionFactor,0*correctionFactor,-39.5),new THREE.Vector3(18*correctionFactor,0*correctionFactor,-39.5))
+    //
+    //    //near side baseline
+    //    drawCourtHelper(new THREE.Vector3(-18*correctionFactor,0*correctionFactor,39.5),new THREE.Vector3(18*correctionFactor,0*correctionFactor,39.5))
+    //
+    //    //far side service box
+    //    drawCourtHelper(new THREE.Vector3(-13.5*correctionFactor,0*correctionFactor,-21),new THREE.Vector3(13.5*correctionFactor,0*correctionFactor,-21))
+    //
+    //    //near side service box
+    //    drawCourtHelper(new THREE.Vector3(-13.5*correctionFactor,0*correctionFactor,21),new THREE.Vector3(13.5*correctionFactor,0*correctionFactor,21))
+    //
+    //    //middle line vertical
+    //    drawCourtHelper(new THREE.Vector3(0*correctionFactor,0*correctionFactor,21),new THREE.Vector3(0*correctionFactor,0*correctionFactor,-21))
+    //
+    //    //middle line horizontal
+    //    drawCourtHelper(new THREE.Vector3(-13.5*correctionFactor,0*correctionFactor,0),new THREE.Vector3(13.5*correctionFactor,0*correctionFactor,0))
+    //
+    //    //far side mid tip
+    //    drawCourtHelper(new THREE.Vector3(0*correctionFactor,0*correctionFactor,-39.5),new THREE.Vector3(0*correctionFactor,0*correctionFactor,-38.5))
+    //
+    //    //near side mid tip
+    //    drawCourtHelper(new THREE.Vector3(0*correctionFactor,0*correctionFactor,39.5),new THREE.Vector3(0*correctionFactor,0*correctionFactor,38.5))
+    //}
+
+    /* draw court using TubeGeometry (uses drawCourtHelper) */
+    function drawCourt()
+    {
+        //left side
+        drawCourtHelper(new THREE.Vector3(-15,0,20),new THREE.Vector3(-15,0,-20))
+        drawCourtHelper(new THREE.Vector3(-20,0,20),new THREE.Vector3(-20,0,-20))
+
+        //right side
+        drawCourtHelper(new THREE.Vector3(15,0,20),new THREE.Vector3(15,0,-20))
+        drawCourtHelper(new THREE.Vector3(20,0,20),new THREE.Vector3(20,0,-20))
+
+        //far side baseline
+        drawCourtHelper(new THREE.Vector3(-20,0,-20),new THREE.Vector3(20,0,-20))
+
+        //near side baseline
+        drawCourtHelper(new THREE.Vector3(-20,0,20),new THREE.Vector3(20,0,20))
+
+        //far side service box
+        drawCourtHelper(new THREE.Vector3(-15,0,-11),new THREE.Vector3(15,0,-11))
+
+        //near side service box
+        drawCourtHelper(new THREE.Vector3(-15,0,11),new THREE.Vector3(15,0,11))
+
+        //middle line vertical
+        drawCourtHelper(new THREE.Vector3(0,0,11),new THREE.Vector3(0,0,-11))
+
+        //far side mid tip
+        drawCourtHelper(new THREE.Vector3(0,0,-20),new THREE.Vector3(0,0,-19))
+
+        //near side mid tip
+        drawCourtHelper(new THREE.Vector3(0,0,20),new THREE.Vector3(0,0,19))
+    }
+
+    function drawCourtHelper(coordinate1, coordinate2)
+    {
+        /* left singles horizontal */
+        // path
+        var points = [];
+        points.push(coordinate1,coordinate2 )
+
+        // params
+        var pathSegments = 512;
+        var tubeRadius = 0.1;
+        var radiusSegments = 5;
+        var closed = false;
+
+        // material
+        var material = new THREE.MeshPhongMaterial( {
+            //color: 0x00ffff, //alice blue
+            color: 'white',
+            side: THREE.DoubleSide
+        } );
+
+        var path = new THREE.CatmullRomCurve3( points );
+
+        // geometry
+        var geometry = new THREE.TubeGeometry( path, pathSegments, tubeRadius, radiusSegments, open );
+
+        // to buffer goemetry
+        geometry = new THREE.BufferGeometry().fromGeometry( geometry );
+
+        // mesh
+        var mesh = new THREE.Mesh( geometry, material );
+        scene.add( mesh );
+    }
+
+    function drawFloorAndSkyAnimate()
+    {
+        animationTracker = requestAnimationFrame( drawFloorAndSkyAnimate );
+        count++;
+        renderer.render(scene,camera);
+        controls.update();
+//        console.log("position : x=="+floor.position.x+",y=="+floor.position.y+",z=="+floor.position.z);
+//        console.log("rotation : x=="+floor.rotation.x+",y=="+floor.rotation.y+",z=="+floor.rotation.z);
+//        console.log("count=="+count);
+//        console.log(controls);
+
+//        if(count == 1000)
+//        {
+//            cancelAnimationFrame(animationTracker);
+//            return;
+//        }
+    }
+
+    function drawFloorAndSky()
+    {
+        //////////////
+        // CONTROLS //
+        //////////////
+        // move mouse and: left   click to rotate,
+        //                 middle click to zoom,
+        //                 right  click to pan
+        controls = new THREE.OrbitControls( camera, renderer.domElement );
+
+        ///////////
+        // FLOOR //
+        ///////////
+        // note: 4x4 checkboard pattern scaled so that each square is 25 by 25 pixels.
+        //var floorTexture = new THREE.ImageUtils.loadTexture( 'images/checkerboard.jpg' );
+        floorTexture = new THREE.ImageUtils.loadTexture( '../images/grass256.jpg' );
+        floorTexture.wrapS = floorTexture.wrapT = THREE.RepeatWrapping;
+        floorTexture.repeat.set( 20, 20 );
+        // DoubleSide: render texture on both sides of mesh
+        floorMaterial = new THREE.MeshBasicMaterial( { map: floorTexture, side: THREE.DoubleSide } );
+        floorGeometry = new THREE.PlaneGeometry(100, 100, 1, 1);
+        floor = new THREE.Mesh(floorGeometry, floorMaterial);
+        floor.position.y = -0.5;
+        floor.rotation.x = Math.PI / 2;
+        scene.add(floor);
+
+        /////////
+        // SKY //
+        /////////
+        // recommend either a skybox or fog effect (can't use both at the same time)
+        // without one of these, the scene's background color is determined by webpage background
+        // make sure the camera's "far" value is large enough so that it will render the skyBox!
+        skyBoxGeometry = new THREE.CubeGeometry( 1000, 1000, 1000 );
+        // BackSide: render faces from inside of the cube, instead of from outside (default).
+        skyBoxMaterial = new THREE.MeshBasicMaterial( { color: 0x9999ff, side: THREE.BackSide } );
+        skyBox = new THREE.Mesh( skyBoxGeometry, skyBoxMaterial );
+        scene.add(skyBox);
+
+        /* keeping it going */
+        requestAnimationFrame( drawFloorAndSkyAnimate );
+        renderer.render(scene,camera);
+        controls.update();
+    }
+</script>
+</html>
