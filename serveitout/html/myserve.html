@@ -11,7 +11,7 @@
     <!--<script src="../libraries/three.build.min.js"></script>&lt;!&ndash; three.js library working &ndash;&gt;-->
     <script src="http://cdnjs.cloudflare.com/ajax/libs/three.js/r72/three.min.js"></script>
     <script src="../libraries/Detector.js"></script><!--to detect WebGL-->
-    <script src="../libraries/OrbitControls.js"></script><!--to be able to pan and do controls.update-->
+    <script src="https://dl.dropboxusercontent.com/u/3587259/Code/Threejs/OrbitControls.js"></script><!--to be able to pan and do controls.update-->
     <script src="../libraries/THREEx.FullScreen.js"></script><!--full screen on pressing 'm'-->
     <script src="../libraries/THREEx.WindowResize.js"></script><!--window resize-->
     <script src="../libraries/gastrailjs/TrackballControls.js"></script><!--gas trail-->
@@ -49,15 +49,15 @@
     </div>
     <div>
         <p>Select player from list</p><br>
-        <select id="playerselect" name="playerselect" onchange="updateSelection('player')">
+        <select id="playerselect" name="playerselect" onchange="updateSelection('playerSelection')">
             <option selected="true" style="display:none;">Select player</option>
-            <option value="Marat Safin">Marat Safin</option>
-            <option value="Radek Stepanek">Radek Stepanek</option>
+            <!--<option value="Marat Safin">Marat Safin</option>-->
+            <!--<option value="Radek Stepanek">Radek Stepanek</option>-->
         </select>
     </div>
     <div>
         <p>Select type of serve</p><br>
-        <select id="serveselect" name="serveselect" onchange="updateSelection('servefirstsecond')">
+        <select id="serveselect" name="serveselect" onchange="updateSelection('serveSelection')">
             <option selected="true" style="display:none;">Select serve</option>
             <option value="both serves">Total Serves</option>
             <option value="first serve">First Serve</option>
@@ -66,73 +66,6 @@
     </div>
     <div>
         <svg id="tennis-court" >
-
-            <svg onclick="updateSelection('Deuce')">
-                <rect x="20" y="35" width="30" height="30" />
-                <text x="21" y="50" >Deuce</text>
-                <text x="15" y="130">Side selection</text>
-            </svg>
-
-            <svg onclick="updateSelection('Ad')">
-                <rect x="50" y="35" width="30" height="30" />
-                <text x="60" y="50" >Ad</text>
-            </svg>
-
-            <path d="M10 10 L10 120 L20 120 L20 10 Z" />
-            <path d="M10 10 L90 10 Z" />
-            <path d="M90 10 L90 120 L80 120 L80 10 Z" />
-            <path d="M90 120 L10 120 Z" />
-            <path d="M10 65 L90 65 Z" />
-            <path d="M10 35 L90 35 Z" />
-            <path d="M10 95 L90 95 Z" />
-            <path d="M50 35 L50 95 Z" />
-
-            <path d="M50 10 L50 15 Z" />
-            <path d="M50 120 L50 115 Z" />
-
-            <!--3 slices 3 slices 3 slices 3 slices 3 slices 3 slices 3 slices 3 slices 3 slices 3 slices 3 slices 3 slices-->
-            <!--3 slices 3 slices 3 slices 3 slices 3 slices 3 slices 3 slices 3 slices 3 slices 3 slices 3 slices 3 slices-->
-            <!--3 slices 3 slices 3 slices 3 slices 3 slices 3 slices 3 slices 3 slices 3 slices 3 slices 3 slices 3 slices-->
-            <svg onclick="updateSelection('Wide')">
-                <rect x="120" y="35" width="10" height="30" />
-                <text x="120" y="50" fill="red">W</text>
-            </svg>
-            <svg onclick="updateSelection('Body')">
-                <rect x="130" y="35" width="15" height="30" />
-                <text x="134" y="50" fill="red">B</text>
-            </svg>
-            <svg onclick="updateSelection('T')">
-                <rect x="145" y="35" width="5" height="30" />
-                <text x="144" y="50" fill="red">T</text>
-                <text x="110" y="130">Direction selection</text>
-            </svg>
-
-            <svg onclick="updateSelection('T')">
-                <rect x="150" y="35" width="15" height="30" />
-                <text x="150" y="50" fill="red">T</text>
-            </svg>
-            <svg onclick="updateSelection('Body')">
-                <rect x="155" y="35" width="15" height="30" />
-                <text x="158" y="50" fill="red">B</text>
-            </svg>
-            <svg onclick="updateSelection('Wide')">
-                <rect x="170" y="35" width="10" height="30" />
-                <text x="169" y="50" fill="red">W</text>
-            </svg>
-
-
-            <path d="M110 10 L110 120 L120 120 L120 10 Z" />
-            <path d="M110 10 L190 10 Z" />
-            <path d="M190 10 L190 120 L180 120 L180 10 Z" />
-            <path d="M190 120 L110 120 Z" />
-            <path d="M110 65 L190 65 Z" />
-            <path d="M110 35 L190 35 Z" />
-            <path d="M110 95 L190 95 Z" />
-            <path d="M150 35 L150 95 Z" />
-
-            <path d="M150 10 L150 15 Z" />
-            <path d="M150 120 L150 115 Z" />
-
             <!--6 slices 6 slices 6 slices 6 slices 6 slices 6 slices 6 slices 6 slices 6 slices 6 slices-->
             <!--6 slices 6 slices 6 slices 6 slices 6 slices 6 slices 6 slices 6 slices 6 slices 6 slices-->
             <!--6 slices 6 slices 6 slices 6 slices 6 slices 6 slices 6 slices 6 slices 6 slices 6 slices        -->
@@ -177,12 +110,12 @@
         </svg>
     </div>
 
-    <div>
-        <svg id="selectionUpdate">
-            <path d="M0 0 L0 100 L280 100 L280 0 Z" />
-            <text id="updateText" x="80" y="50" font-size="20" font-family="tempus sans itc">Make a selection...</text>
-        </svg>
-    </div>
+    <!--<div>-->
+        <!--<svg id="selectionUpdate">-->
+            <!--<path d="M0 0 L0 100 L280 100 L280 0 Z" />-->
+            <!--<text id="updateText" x="80" y="50" font-size="20" font-family="tempus sans itc">Make a selection...</text>-->
+        <!--</svg>-->
+    <!--</div>-->
     <div>
         <!--<button id = "visualizeBtn" onclick="visualizeServe()">Visualize serve</button>-->
         <button id = "visualizeBtn" onclick="init()">Visualize serve</button>
@@ -206,7 +139,7 @@
     <!--<script type="text/javascript" src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>-->
     <!--<script type="text/javascript" src="js/tennis.js"></script>-->
     <div id="ThreeJS"></div>
-    </div>
+</div>
 </body>
 <script src="../js/helper.js"></script>
 <script>
