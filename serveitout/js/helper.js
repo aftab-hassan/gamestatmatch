@@ -31,7 +31,8 @@ function updateSelection(selectionmade)
         playerSelection=document.getElementById("playerselect");
         playerIndex = playerSelection[playerSelection.selectedIndex].index;
         playerSelection = playerSelection[playerSelection.selectedIndex].value;
-        addTextHelper(0,playerSelection,-5,28,0,false,2,0.1);
+        //addTextHelper(0,"serve direction",-12,0,4,true,3,0.1,-Math.PI / 2);
+        addTextHelper(0,playerSelection,-15,0,0,false,4,0.1,-Math.PI / 2,0xf0f8ff);
         console.log("playerSelection == "+playerSelection);
     }
 
@@ -51,25 +52,25 @@ function updateSelection(selectionmade)
         /* ad_wide, ad_middle, ad_t, deuce_t, deuce_middle, deuce_wide */
         //if(hasUnderscore(selectionmade) == true)
         //{
-            //console.log("came inside this,selectionmade=="+selectionmade);
-            serveDirection = selectionmade;
+        //console.log("came inside this,selectionmade=="+selectionmade);
+        serveDirection = selectionmade;
 
-            //var delimiter = "_";
-            ////console.log(playerSelection + "'s " + selectionmade.split(delimiter)[1] + " " + serveSelection + " to the " + selectionmade.split(delimiter)[0] + " side")
-            //document.getElementById('updateText').textContent = playerSelection + "'s " + selectionmade.split(delimiter)[1] + " " + serveSelection + " to the " + selectionmade.split(delimiter)[0] + " side";
+        //var delimiter = "_";
+        ////console.log(playerSelection + "'s " + selectionmade.split(delimiter)[1] + " " + serveSelection + " to the " + selectionmade.split(delimiter)[0] + " side")
+        //document.getElementById('updateText').textContent = playerSelection + "'s " + selectionmade.split(delimiter)[1] + " " + serveSelection + " to the " + selectionmade.split(delimiter)[0] + " side";
         //}
 
         /* wide, middle, t */
         //else
         //{
-            //console.log(playerSelection + "'s " + " " + selectionmade + " " + serveSelection)
-            //document.getElementById('updateText').textContent = playerSelection + "'s " + selectionmade + " " + serveSelection;
+        //console.log(playerSelection + "'s " + " " + selectionmade + " " + serveSelection)
+        //document.getElementById('updateText').textContent = playerSelection + "'s " + selectionmade + " " + serveSelection;
         //}
         console.log("serveDirection == "+serveDirection);
     }
 
     /* The following if check ensures that I try to find the 'row' from the JSON file, only after the
-    * player and serve have been seleected from drop down list */
+     * player and serve have been seleected from drop down list */
     if(playerIndex != -1 && serveIndex != -1)
     {
         /* 1 Total, 1 1, 1 2, 2 Total, 2 1, 2 2 */
@@ -104,8 +105,8 @@ function readSingleFile(evt)
             /* populating drop down list - "match_id":"20041107-M-Paris_Masters-F-Marat_Safin-Radek_Stepanek", */
             var dropdownListID = document.getElementById("playerselect");
             var defaultOption = new Option("Select player","Select player");
-            var player1 = new Option(JSONobj[0].match_id.split("-")[4],JSONobj[0].match_id.split("-")[4]);
-            var player2 = new Option(JSONobj[0].match_id.split("-")[5],JSONobj[0].match_id.split("-")[5]);
+            var player1 = new Option(JSONobj[0].match_id.split("-")[4].split('_').join(' '),JSONobj[0].match_id.split("-")[4].split('_').join(' '));
+            var player2 = new Option(JSONobj[0].match_id.split("-")[5].split('_').join(' '),JSONobj[0].match_id.split("-")[5].split('_').join(' '));
             dropdownListID.options[0] = defaultOption;
             dropdownListID.options[1] = player1;
             dropdownListID.options[2] = player2;
@@ -155,10 +156,22 @@ var SCREEN_WIDTH,SCREEN_HEIGHT,scene,camera,renderer,light,container,animationTr
 var courtSelection;
 var floormesh=null,floorTexture,floorMaterial,floorGeometry;//floor
 var skyBoxGeometry,skyBoxMaterial,skyBox;//sky
-var nEnd = 0,nMax,nStep = 120;
-var mesh;
 var textMeshArray = [];
-//var textAnimationCount = 0;
+/* far side */
+var farBaselineZ = -35;
+/* near side */
+var nearBaselineZ = 15;
+/* left side */
+var leftSinglesLineX = -15, leftDoublesLineX = -20;
+/* right side */
+var rightSinglesLineX = 15, rightDoublesLineX = 20;
+/* coordinates needing computation */
+var midLineX = leftDoublesLineX + (rightDoublesLineX - leftDoublesLineX)/2
+var nearServiceBoxZ = nearBaselineZ - (0.4 * ((nearBaselineZ - farBaselineZ)/2));
+var farServiceBoxZ = farBaselineZ + (0.4 * ((nearBaselineZ - farBaselineZ)/2));
+var netLineZ = nearBaselineZ - ((nearBaselineZ - farBaselineZ)/2)
+var pins = [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ];
+var clothGeometry;
 
 /* three.js helper functions */
 
@@ -259,7 +272,7 @@ function init()
         /* 3.camera */
         camera = new THREE.PerspectiveCamera(45,SCREEN_WIDTH/SCREEN_HEIGHT,0.1,1000);
         camera.position.x = 0;
-        camera.position.y = 20;
+        camera.position.y = 40;
         camera.position.z = 58;
         camera.lookAt(scene.position);
 
@@ -292,16 +305,31 @@ function init()
         /* adding elements to scene */
         resizeWindowAndToggleOnM();
         drawCourt();
+        drawNet();
         drawFloorAndSky();
+        datGUIControls();
 
         /* 8.weave together */
         container = document.getElementById('ThreeJS')
         container.appendChild(renderer.domElement);
         //scene.add(cube);
+
+        /* test function to draw Court markers */
+        //showDistanceMarkersOnCourt();
     }
 
     else
     {
+        /* disabling the dropdown lists since selections have been made
+         * Keeping them open, just floods
+         * 1. Percentage comparison about on-court statistics - ad_wide + ... deuce_wide != 100 %
+         * 2. Too much text going from sky to the court area */
+        document.getElementById("playerselect").disabled=true;
+        document.getElementById("playerselect").style="background-color:#d3d3d3";
+
+        document.getElementById("serveselect").disabled=true;
+        document.getElementById("serveselect").style="background-color:#d3d3d3";
+
         //console.log("count=="+getCount())
         setCount(parseInt(getCount())+1);
         //console.log("came inside the config setting NOT NEEDED part of init function...")
@@ -312,7 +340,7 @@ function init()
 
         //show ball marker
         var markerSphere = new THREE.Mesh(new THREE.SphereGeometry(0.8,31,31), new THREE.MeshLambertMaterial({
-            color: getCurveColor(),
+            color: getCurveColor(serveDirection),
             opacity: 1,
             transparent: true,
             //wireframe : true,
@@ -323,11 +351,14 @@ function init()
         scene.add(markerSphere);
 
         //show text
-        addTextHelper(0,"Direction : "+getServeDirectionToAddText(),-40,26-((getCount()-1)*space),0,false,1.8,0.1);
-        addTextHelper(0,"Serves : "+getNumberOfServesToAddText(),-12,26-((getCount()-1)*space),0,false,1.8,0.1);
-        addTextHelper(0,"Avg. Height : "+getAverageServeHeightToAddText(),5,26-((getCount()-1)*space),0,false,1.8,0.1);
-        addTextHelper(0,"Avg. Speed : "+getAverageServeSpeedToAddText(),23,26-((getCount()-1)*space),0,false,1.8,0.1);
+        addTextHelper(0,"Direction : "+getServeDirectionToAddText(),-40,26-((getCount()-1)*space),0,false,1.8,0.1,0,0xf0f8ff);
+        addTextHelper(0,"Serves : "+getNumberOfServesToAddText(serveDirection),-12,26-((getCount()-1)*space),0,false,1.8,0.1,0,0xf0f8ff);
+        addTextHelper(0,"Avg. Height : "+getAverageServeHeightToAddText(),5,26-((getCount()-1)*space),0,false,1.8,0.1,0,0xf0f8ff);
+        addTextHelper(0,"Avg. Speed : "+getAverageServeSpeedToAddText(),23,26-((getCount()-1)*space),0,false,1.8,0.1,0,0xf0f8ff);
         //console.log("y coordinate == "+22-((getCount()-1)*space));
+
+        /* testing the split function */
+        //showStripwiseSplit();
 
         /* plot serve trajectory */
         drawIncrementalTubeAndSphere();
@@ -406,22 +437,22 @@ function drawLine()
 /* draw court using TubeGeometry (uses drawCourtHelper) */
 function drawCourt()
 {
-    /* far side */
-    var farBaselineZ = -35;
-
-    /* near side */
-    var nearBaselineZ = 15;
-
-    /* left side */
-    var leftSinglesLineX = -15, leftDoublesLineX = -20;
-
-    /* right side */
-    var rightSinglesLineX = 15, rightDoublesLineX = 20;
-
-    /* coordinates needing computation */
-    var midLineX = leftDoublesLineX + (rightDoublesLineX - leftDoublesLineX)/2
-    var nearServiceBoxZ = nearBaselineZ - (0.4 * ((nearBaselineZ - farBaselineZ)/2));
-    var farServiceBoxZ = farBaselineZ + (0.4 * ((nearBaselineZ - farBaselineZ)/2));
+    ///* far side */
+    //var farBaselineZ = -35;
+    //
+    ///* near side */
+    //var nearBaselineZ = 15;
+    //
+    ///* left side */
+    //var leftSinglesLineX = -15, leftDoublesLineX = -20;
+    //
+    ///* right side */
+    //var rightSinglesLineX = 15, rightDoublesLineX = 20;
+    //
+    ///* coordinates needing computation */
+    //var midLineX = leftDoublesLineX + (rightDoublesLineX - leftDoublesLineX)/2
+    //var nearServiceBoxZ = nearBaselineZ - (0.4 * ((nearBaselineZ - farBaselineZ)/2));
+    //var farServiceBoxZ = farBaselineZ + (0.4 * ((nearBaselineZ - farBaselineZ)/2));
 
     //left side
     drawCourtHelper(new THREE.Vector3(leftSinglesLineX,0,nearBaselineZ),new THREE.Vector3(leftSinglesLineX,0,farBaselineZ))
@@ -480,11 +511,14 @@ function drawCourt()
     //
     //scene.add(sphere);
 
-    addTextHelper(0,"serve direction",-3,27,0,true,1,0.1);
+    //addTextHelper(0,"serve direction",-3,27,0,true,2,0.1,0);
+    addTextHelper(0,"serve direction",-12,0,4,true,3,0.1,-Math.PI / 2,0xf0f8ff);
 }
 
 function drawCourtHelper(coordinate1, coordinate2)
 {
+    var courtMesh;
+
     /* left singles horizontal */
     // path
     var points = [];
@@ -511,9 +545,9 @@ function drawCourtHelper(coordinate1, coordinate2)
     // to buffer goemetry
     geometry = new THREE.BufferGeometry().fromGeometry( geometry );
 
-    // mesh
-    mesh = new THREE.Mesh( geometry, material );
-    scene.add( mesh );
+    // courtMesh
+    courtMesh = new THREE.Mesh( geometry, material );
+    scene.add( courtMesh );
 }
 
 function drawFloorAndSkyAnimate()
@@ -532,7 +566,7 @@ function drawFloorAndSky()
     //                 middle click to zoom,
     //                 right  click to pan
     controls = new THREE.OrbitControls( camera, renderer.domElement );
-    controls.target.set( 0, 8, 0 );
+    //controls.target.set( 0, 8, 0 );
 
     ///////////
     // FLOOR //
@@ -572,7 +606,6 @@ function drawFloorAndSky()
 function visualizeServe()
 {
     alert("came inside visualizeServe...")
-
 }
 
 function getTubeData(XCoordinateStart,XCoordinateEnd)
@@ -614,16 +647,7 @@ function getTubeData(XCoordinateStart,XCoordinateEnd)
     return points;
 }
 
-function getServeCountInDirection()
-{
-    for(var i = 0; i < JSONobj.length; i++)
-    {
-        if(JSONobj[i].row == row)
-            return JSONobj[i][serveDirection];
-    }
-}
-
-function getCurveColor()
+function getCurveColor(serveDirection)
 {
     switch(serveDirection)
     {
@@ -642,15 +666,62 @@ function getCurveColor()
     }
 }
 
+//function getCurveColor(serveDirection)
+//{
+//    var toReturn;
+//    switch(serveDirection)
+//    {
+//        case 'ad_wide':
+//        {
+//            toReturn = 0x00ffff;
+//            break;
+//        }
+//
+//        case 'ad_middle':
+//        {
+//            toReturn = 0x9ACD32;
+//            break;
+//        }
+//
+//        case 'ad_t':
+//        {
+//            toReturn = 0xFF3300;
+//            break;
+//        }
+//
+//        case 'deuce_t':
+//        {
+//            toReturn = 0x000033;
+//            break;
+//        }
+//
+//        case 'deuce_middle':
+//        {
+//            toReturn = 0xFEE0C6;
+//            break;
+//        }
+//
+//        case 'deuce_wide':
+//        {
+//            toReturn = 0xFF6600;
+//            break;
+//        }
+//    }
+//    console.log("came inside getCurveColor with serveDirection=="+serveDirection+", returning"+toReturn);
+//    return toReturn;
+//}
+
 function drawIncrementalTubeAndSphere()
 {
     var curveColor;
     var curveColorDebug;
+    var tubeMesh;
+    var nEnd = 0,nMax,nStep = 1000;
 
     //console.log("serveDirection=="+serveDirection)
     var XCoordinateStart,XCoordinateEnd;
 
-    numServes = getServeCountInDirection()
+    numServes = getServeCountInDirection(serveDirection)
     console.log("numServes ==" + numServes);
 
     /* setting XCoordinate based on  serveDirection */
@@ -658,37 +729,37 @@ function drawIncrementalTubeAndSphere()
         case 'ad_wide':
             XCoordinateStart = -15;
             XCoordinateEnd = -10;
-            curveColor = getCurveColor();//alice blue
+            curveColor = getCurveColor(serveDirection);//alice blue
             curveColorDebug = 'alice blue'
             break;
         case 'ad_middle':
             XCoordinateStart = -10;
             XCoordinateEnd = -3;
-            curveColor = getCurveColor();//yellow green
+            curveColor = getCurveColor(serveDirection);//yellow green
             curveColorDebug = 'yellow green'
             break;
         case 'ad_t':
             XCoordinateStart = -3;
             XCoordinateEnd = 0;
-            curveColor = getCurveColor();//red
+            curveColor = getCurveColor(serveDirection);//red
             curveColorDebug = 'red'
             break;
         case 'deuce_t':
             XCoordinateStart = 0;
             XCoordinateEnd = 3;
-            curveColor = getCurveColor();//blue
+            curveColor = getCurveColor(serveDirection);//blue
             curveColorDebug = 'blue'
             break;
         case 'deuce_middle':
             XCoordinateStart = 3;
             XCoordinateEnd = 10;
-            curveColor = getCurveColor();//caramel
+            curveColor = getCurveColor(serveDirection);//caramel
             curveColorDebug = 'caramel'
             break;
         case 'deuce_wide':
             XCoordinateStart = 10;
             XCoordinateEnd = 15;
-            curveColor = getCurveColor();//orange
+            curveColor = getCurveColor(serveDirection);//orange
             curveColorDebug = 'orange'
             break;
     }
@@ -744,20 +815,24 @@ function drawIncrementalTubeAndSphere()
         geometry = new THREE.BufferGeometry().fromGeometry( geometry );
         nMax = geometry.attributes.position.count;
 
-        // mesh
-        mesh = new THREE.Mesh( geometry, material );
-        scene.add( mesh );
+        // tubeMesh
+        tubeMesh = new THREE.Mesh( geometry, material );
+        scene.add(tubeMesh);
+        animateIncrementalServe(tubeMesh,nEnd,nStep,nMax);
 
-        //animateIncrementalServe();
         displaySphere(points,curveColor);
     }
     material = null;
 }
 
-function animateIncrementalServe() {
+/* The simpler replacement of this is just : scene.add( tubeMesh ); */
+function animateIncrementalServe(tubeMesh,nEnd,nStep,nMax) {
 
-    animationTracker = requestAnimationFrame( animateIncrementalServe );
-//        nEnd = ( nEnd + nStep ) % nMax;
+    animationTracker = requestAnimationFrame( function(){animateIncrementalServe(tubeMesh,nEnd,nStep,nMax)} );
+
+    //below line to repeat process (run in loop)
+    //nEnd = ( nEnd + nStep ) % nMax;
+
     nEnd = ( nEnd + nStep );
 
     if(nEnd > nMax)
@@ -766,8 +841,8 @@ function animateIncrementalServe() {
         return;
     }
 
-    mesh.geometry.setDrawRange( 0, nEnd );
-    //console.log("nEnd=="+nEnd+"nMax=="+nMax);
+    tubeMesh.geometry.setDrawRange( 0, nEnd );
+    console.log("inside animateIncrementalServe, nEnd=="+nEnd+"nMax=="+nMax);
     renderer.render( scene, camera );
 }
 
@@ -955,7 +1030,7 @@ function generateRandomString(length)
 //    requestAnimationFrame( function(){addTextHelper(textAnimationCount+1,text,XCoordinate,YCoordinate,ZCoordinate,persist,textSize,textHeight)} );
 //}
 
-function addTextHelper(textAnimationCount,text,XCoordinate,YCoordinate,ZCoordinate,persist,textSize,textHeight)
+function addTextHelper(textAnimationCount,text,XCoordinate,YCoordinate,ZCoordinate,persist,textSize,textHeight,textRotation,textColor)
 {
     /* Logic
      Assume : var textLoadBreakpointsArray = [5,10,20,30,40]
@@ -1030,7 +1105,7 @@ function addTextHelper(textAnimationCount,text,XCoordinate,YCoordinate,ZCoordina
     var textLoadBreakpointsArray = [5,10,15]
     if(textLoadBreakpointsArray.indexOf(textAnimationCount) > -1)
     {
-        addText(generateRandomString(text.length),XCoordinate,YCoordinate,ZCoordinate,false,textSize,textHeight)
+        addText(generateRandomString(text.length),XCoordinate,YCoordinate,ZCoordinate,false,textSize,textHeight,textRotation,textColor)
     }
 
     /* blink */
@@ -1050,21 +1125,21 @@ function addTextHelper(textAnimationCount,text,XCoordinate,YCoordinate,ZCoordina
         }
         //console.log("textAnimationCount=="+textAnimationCount+",blinkDisplayNeeded=="+blinkDisplayNeeded+",teed off by"+textBlinkBreakpointsArray[i]);
         if(blinkDisplayNeeded == true)
-            addText(text,XCoordinate,YCoordinate,ZCoordinate,false,textSize,textHeight)
+            addText(text,XCoordinate,YCoordinate,ZCoordinate,false,textSize,textHeight,textRotation,textColor)
         else
-            addText("",XCoordinate,YCoordinate,ZCoordinate,false,textSize,textHeight)
+            addText("",XCoordinate,YCoordinate,ZCoordinate,false,textSize,textHeight,textRotation,textColor)
     }
 
     /* final persistent display */
     if(textAnimationCount == textBlinkBreakpointsArray[textBlinkBreakpointsArray.length -1])
-        addText(text,XCoordinate,YCoordinate,ZCoordinate,true,textSize,textHeight)
+        addText(text,XCoordinate,YCoordinate,ZCoordinate,true,textSize,textHeight,textRotation,textColor)
 
-    requestAnimationFrame( function(){addTextHelper(textAnimationCount+1,text,XCoordinate,YCoordinate,ZCoordinate,persist,textSize,textHeight)} );
+    requestAnimationFrame( function(){addTextHelper(textAnimationCount+1,text,XCoordinate,YCoordinate,ZCoordinate,persist,textSize,textHeight,textRotation,textColor)} );
 }
 
 /* adds text given a string */
-/* Correct call : //addText("PLAYER : ",-25,16,0,true); */
-function addText(text,XCoordinate,YCoordinate,ZCoordinate,persist,textSize,textHeight)
+/* Correct call : addTextHelper(0,"serve direction",-12,0,4,true,3,0.1,-Math.PI / 2); */
+function addText(text,XCoordinate,YCoordinate,ZCoordinate,persist,textSize,textHeight,textRotation,textColor)
 {
     //console.log(" came inside addText as addText("+text+","+XCoordinate+","+YCoordinate+","+ZCoordinate+","+persist+")");
     //console.log("text=="+text);
@@ -1076,8 +1151,10 @@ function addText(text,XCoordinate,YCoordinate,ZCoordinate,persist,textSize,textH
     // add 3D text
     //var materialFront = new THREE.MeshBasicMaterial( { color: 0xff0000 } );
     //var materialSide = new THREE.MeshBasicMaterial( { color: 0x000088 } );
-    var materialFront = new THREE.MeshBasicMaterial( { color: 0xf0f8ff } );
-    var materialSide = new THREE.MeshBasicMaterial( { color: 0xf0f8ff } );
+    //var materialFront = new THREE.MeshBasicMaterial( { color: 0xf0f8ff } );
+    //var materialSide = new THREE.MeshBasicMaterial( { color: 0xf0f8ff } );
+    var materialFront = new THREE.MeshBasicMaterial( { color: textColor } );
+    var materialSide = new THREE.MeshBasicMaterial( { color: textColor } );
     var materialArray = [ materialFront, materialSide ];
 
 //	var textGeom = new THREE.TextGeometry( "Hello, World!",
@@ -1099,6 +1176,7 @@ function addText(text,XCoordinate,YCoordinate,ZCoordinate,persist,textSize,textH
 
     textMesh.position.set( XCoordinate,YCoordinate,ZCoordinate );
     //textMesh.rotation.x = -Math.PI / 4;
+    textMesh.rotation.x = textRotation;
     scene.add(textMesh);
     if(persist == false)
         textMeshArray.push(textMesh);
@@ -1110,13 +1188,13 @@ function addText(text,XCoordinate,YCoordinate,ZCoordinate,persist,textSize,textH
 }
 
 /* helper function to addText giving serve information, which translates
-* ad_wide : Ad court wide
-* ad_middle : Ad court middle
-* ad_t : Ad court T
-* deuce_wide : Deuce court wide
-* deuce_middle : Deuce court middle
-* deuce_t : Deuce court T
-* */
+ * ad_wide : Ad court wide
+ * ad_middle : Ad court middle
+ * ad_t : Ad court T
+ * deuce_wide : Deuce court wide
+ * deuce_middle : Deuce court middle
+ * deuce_t : Deuce court T
+ * */
 function getServeDirectionToAddText()
 {
     switch(serveDirection)
@@ -1136,11 +1214,20 @@ function getServeDirectionToAddText()
     }
 }
 
+function getServeCountInDirection(serveDirection)
+{
+    for(var i = 0; i < JSONobj.length; i++)
+    {
+        if(JSONobj[i].row == row)
+            return JSONobj[i][serveDirection];
+    }
+}
+
 /* helper function to addText giving serve information, on the number of serves made in that direction */
-function getNumberOfServesToAddText()
+function getNumberOfServesToAddText(serveDirection)
 {
     //return "22/88";
-    numServes = getServeCountInDirection()
+    numServes = getServeCountInDirection(serveDirection)
 
     var totalServes = 0;
     for(var i = 0;i<JSONobj.length;i++)
@@ -1148,7 +1235,7 @@ function getNumberOfServesToAddText()
         if(JSONobj[i].row == row)
         {
             totalServes = JSONobj[i]["ad_wide"] + JSONobj[i]["ad_middle"] + JSONobj[i]["ad_t"]
-            +JSONobj[i]["deuce_t"] + JSONobj[i]["deuce_middle"] + JSONobj[i]["deuce_wide"];
+                +JSONobj[i]["deuce_t"] + JSONobj[i]["deuce_middle"] + JSONobj[i]["deuce_wide"];
             break;
         }
     }
@@ -1167,4 +1254,216 @@ function getAverageServeHeightToAddText()
 function getAverageServeSpeedToAddText()
 {
     return (Math.floor((Math.random()*(140-100))+100).toString() + "mph");
+}
+
+function showStripwiseSplit()
+{
+    var stripData = [
+        {
+            position : 'ad_wide',
+            start : -15,
+            end : -10,
+        },
+        {
+            position : 'ad_middle',
+            start : -10,
+            end : -3,
+        },
+        {
+            position : 'ad_t',
+            start : -3,
+            end : 0,
+        },
+        {
+            position : 'deuce_t',
+            start : 0,
+            end : 3,
+        },
+        {
+            position : 'deuce_middle',
+            start : 3,
+            end : 10,
+        },
+        {
+            position : 'deuce_wide',
+            start : 10,
+            end : 15,
+        }
+    ];
+
+    /* setting the length, width and height of cube */
+    for(var i = 0; i <stripData.length;i++)
+    {
+        var width = stripData[i].end - stripData[i].start;
+        var length = farServiceBoxZ-netLineZ;
+        var height = 0.1;
+        var curveColor = getCurveColor(stripData[i].position);
+
+        var cube = new THREE.Mesh(new THREE.CubeGeometry(width,length,height), new THREE.MeshLambertMaterial({
+            color: curveColor,
+        }));
+
+        /* setting the position of cube */
+        cube.position.x = stripData[i].start + (width/2);
+        cube.position.y = 0;
+        cube.position.z = netLineZ + (length/2);
+        cube.rotation.x = Math.PI / 2;
+
+        /* add cube to scene */
+        scene.add(cube);
+
+        var textSize = 2;
+        var textColor = 0x000000;//black default
+
+        if(stripData[i].position == "deuce_t" || stripData[i].position == "ad_t")
+            textSize = 1;
+
+        if(stripData[i].position == "deuce_t" || stripData[i].position == "ad_t")
+            textColor = 0xffffff;
+
+        var percentageString = getNumberOfServesToAddText(stripData[i].position);
+        console.log("percentageString == "+percentageString);
+        var percentage = Math.round((percentageString.split(" / ")[0] / percentageString.split(" / ")[1]) * 100);
+        addTextHelper(0,percentage.toString(),stripData[i].start + (width/2) - 1,0,netLineZ - 6,true,textSize,0.1,-Math.PI / 2,textColor);
+        addTextHelper(0,"%",stripData[i].start + (width/2),0,netLineZ - 4,true,textSize,0.1,-Math.PI / 2,textColor);
+    }
+}
+
+function showDistanceMarkersOnCourt()
+{
+    var numMarkingsOnEachSide = 5;
+    var markerInterval = (Math.abs(farBaselineZ) - Math.abs(netLineZ))/numMarkingsOnEachSide;
+    var actualDistance = 39;
+    var actualInterval = actualDistance/numMarkingsOnEachSide;
+    var count = 0;
+    for(var i = netLineZ;i>=farBaselineZ;)
+    {
+        console.log("marking at i=="+i +",actual interval = "+actualInterval * count);
+        drawCourtHelper(new THREE.Vector3(leftDoublesLineX - 2,0,i),new THREE.Vector3(leftDoublesLineX - 4,0,i))
+
+        addTextHelper(0,(actualInterval * count).toString() + " feet",leftDoublesLineX - 20,0,i,true,3,0.1,-Math.PI / 2,0xf0f8ff);
+
+        i -= markerInterval;
+        count++;
+    }
+}
+
+function drawNet()
+{
+    console.log("came inside drawNet...");
+    netConfig();
+    netAnimate();
+}
+
+function netConfig()
+{
+    // cloth material
+
+    var clothLoader = new THREE.TextureLoader();
+    var clothTexture = clothLoader.load( '../images/circuit_pattern.png' );
+    //console.log("next line prints THREE.RepeatWrapping ... ");
+    //console.log(THREE.RepeatWrapping);
+    //console.log(clothTexture.wrapS);
+    //clothTexture.wrapS = clothTexture.wrapT = THREE.RepeatWrapping;
+    //clothTexture.anisotropy = 16;
+
+    var clothMaterial = new THREE.MeshPhongMaterial( {
+        specular: 0x030303,
+        map: clothTexture,
+        side: THREE.DoubleSide,
+        alphaTest: 0.5
+    } );
+
+    // cloth geometry
+    clothGeometry = new THREE.ParametricGeometry( clothFunction, cloth.w, cloth.h );
+    clothGeometry.dynamic = true;
+
+    var uniforms = { texture:  { type: "t", value: clothTexture } };
+
+    // cloth mesh
+
+    var object = new THREE.Mesh( clothGeometry, clothMaterial );
+    object.position.set( 0, 0, -10 );
+    object.castShadow = true;
+    scene.add( object );
+
+    object.customDepthMaterial = new THREE.ShaderMaterial( {
+        uniforms: uniforms,
+        side: THREE.DoubleSide
+    } );
+}
+
+function netAnimate() {
+
+    requestAnimationFrame( netAnimate );
+
+    var time = Date.now();
+
+    windStrength = Math.cos( time / 7000 ) * 20 + 40;
+    windForce.set( Math.sin( time / 2000 ), Math.cos( time / 3000 ), Math.sin( time / 1000 ) ).normalize().multiplyScalar( windStrength );
+
+    simulate( time );
+    netRender();
+
+}
+
+function netRender() {
+
+    var timer = Date.now() * 0.0002;
+
+    var p = cloth.particles;
+
+    for ( var i = 0, il = p.length; i < il; i ++ ) {
+
+        clothGeometry.vertices[ i ].copy( p[ i ].position );
+
+    }
+
+    clothGeometry.computeFaceNormals();
+    clothGeometry.computeVertexNormals();
+
+    clothGeometry.normalsNeedUpdate = true;
+    clothGeometry.verticesNeedUpdate = true;
+
+    camera.lookAt( scene.position );
+
+    renderer.render( scene, camera );
+}
+
+function datGUIControls()
+{
+    console.log("came inside datGUIControls....");
+
+    /////////////
+    // dat.GUI //
+    /////////////
+    var gui = new dat.GUI();
+    //var gui = new dat.GUI( { width: 300 } );
+    gui.domElement.id = 'gui';
+
+    var parameters =
+    {
+        f: function() { showStripwiseSplit() },
+        visible: false,
+    };
+
+    gui.add( parameters, 'f' ).name('Show summary');
+
+    var cubeVisible = gui.add( parameters, 'visible' ).name('Court markers').listen();
+    cubeVisible.onChange(function(value)
+    {   console.log(value);
+        showDistanceMarkersOnCourt();
+    });
+
+    gui.open();
+}
+
+function showCourtDimensionsPressed()
+{
+    console.log("came inside showCourtDimensionsPressed ...")
+}
+
+function checkBoxClicked()
+{
+    console.log("checkBox clicked ...")
 }

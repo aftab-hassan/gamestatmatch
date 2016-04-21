@@ -1,0 +1,62 @@
+
+<html>
+    <body>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/three.js/r72/three.min.js"></script>
+    <script src="https://dl.dropboxusercontent.com/u/3587259/Code/Threejs/OrbitControls.js"></script><!--to be able to pan and do controls.update-->
+        <script>
+            var angularSpeed = 0.2;
+            var lastTime = 0;
+            var controls;
+
+            function animate(){
+                var time = (new Date()).getTime();
+                var timeDiff = time - lastTime;
+                var angularChange = angularSpeed * timeDiff * 2 * Math.PI / 1000;
+                cube.rotation.x -= angularChange;
+                console.log("cube.rotation.x =="+cube.rotation.x );
+                lastTime = time;
+            
+                renderer.render(scene, camera);
+                controls.update();
+
+                requestAnimationFrame(function(){
+                    animate();
+                });
+            }
+ 
+            var renderer = new THREE.WebGLRenderer();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.body.appendChild(renderer.domElement);
+
+            var scene = new THREE.Scene();
+
+            var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000);
+            camera.position.x = 0;
+            camera.position.y = 30;
+            camera.position.z = 40;
+//            camera.rotation.x = .70;
+            camera.lookAt(scene.position);
+
+            controls = new THREE.OrbitControls( camera, renderer.domElement );
+            controls.target.set( 0, 8, 0 );
+
+            var cube = new THREE.Mesh(new THREE.CubeGeometry(3,10,0.1), new THREE.MeshLambertMaterial({
+                color: 'blue',
+            }));
+            cube.position.x = -10;
+            cube.position.y = 10;
+            cube.position.z = 0;
+            cube.rotation.x = Math.PI / 2;
+//            cube.rotation.x = Math.PI;
+
+            var light = new THREE.DirectionalLight('white', 1);
+            light.position.set(0,20,40).normalize();
+            scene.add(light);
+
+            scene.add(cube);
+            renderer.render(scene, camera);
+
+//            animate();
+        </script>
+    </body>
+</html>

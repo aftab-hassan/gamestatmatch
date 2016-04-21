@@ -22,3 +22,4 @@ Maybe ball map or something
 http://threejs.org/examples/#webgl_geometry_extrude_splines
 18.Making camera follow an object : https://www.safaribooksonline.com/library/view/threejs-cookbook/9781783981182/ch03s02.html
 Might be useful for hawkeye
+19.Think of displaying/using underground realestate (basically when you pan the camera inverted)

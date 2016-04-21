@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Tennis</title>
+</head>
+<body>
+
+<div id="court" class="row">
+    <div>
+        <p>Select player from list</p><br>
+        <select id="playerselect" name="playerselect" onchange="updateSelection('playerSelection')">
+            <option selected="true" style="display:none;">Select player</option>
+            <!--<option value="Marat Safin">Marat Safin</option>-->
+            <!--<option value="Radek Stepanek">Radek Stepanek</option>-->
+        </select>
+
+        <input id="populateBtn" type="button" value="Populate Drop down" onclick="populate()"/>
+        <input id="disableBtn" type="button" value="Disable" onclick="disableFun()"/>
+    </div>
+</div>
+</body>
+<script>
+    function populate()
+    {
+        console.log("came inside the populate function...");
+
+        /* populating drop down list - */
+        var dropdownListID = document.getElementById("playerselect");
+        var defaultOption = new Option("Select player","Select player");
+        var player1 = new Option("Marat Safin","Marat Safin");
+        var player2 = new Option("Radek Stepanek","Radek Stepanek");
+        dropdownListID.options[0] = defaultOption;
+        dropdownListID.options[1] = player1;
+        dropdownListID.options[2] = player2;
+    }
+
+    function disableFun()
+    {
+        document.getElementById("playerselect").disabled=true;
+//        document.getElementById("playerselect").isDisabled = true;
+    }
+</script>
+</html>
