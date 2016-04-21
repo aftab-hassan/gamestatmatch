@@ -32,6 +32,7 @@ function updateSelection(selectionmade)
         playerIndex = playerSelection[playerSelection.selectedIndex].index;
         playerSelection = playerSelection[playerSelection.selectedIndex].value;
         //addTextHelper(0,"serve direction",-12,0,4,true,3,0.1,-Math.PI / 2);
+        playSound('../sounds/loadingshuffle',1);
         addTextHelper(0,playerSelection,-15,0,0,false,4,0.1,-Math.PI / 2,0xf0f8ff);
         console.log("playerSelection == "+playerSelection);
     }
@@ -306,6 +307,7 @@ function init()
         resizeWindowAndToggleOnM();
         drawCourt();
         drawNet();
+        //playSound('../sounds/courtBackground.mp3',0);
         drawFloorAndSky();
         datGUIControls();
 
@@ -351,6 +353,7 @@ function init()
         scene.add(markerSphere);
 
         //show text
+        playSound('../sounds/loadingshuffle',2);
         addTextHelper(0,"Direction : "+getServeDirectionToAddText(),-40,26-((getCount()-1)*space),0,false,1.8,0.1,0,0xf0f8ff);
         addTextHelper(0,"Serves : "+getNumberOfServesToAddText(serveDirection),-12,26-((getCount()-1)*space),0,false,1.8,0.1,0,0xf0f8ff);
         addTextHelper(0,"Avg. Height : "+getAverageServeHeightToAddText(),5,26-((getCount()-1)*space),0,false,1.8,0.1,0,0xf0f8ff);
@@ -1331,6 +1334,8 @@ function showStripwiseSplit()
 
 function showDistanceMarkersOnCourt()
 {
+    playSound('../sounds/loadingshuffle',1);
+
     var numMarkingsOnEachSide = 5;
     var markerInterval = (Math.abs(farBaselineZ) - Math.abs(netLineZ))/numMarkingsOnEachSide;
     var actualDistance = 39;
@@ -1458,12 +1463,19 @@ function datGUIControls()
     gui.open();
 }
 
-function showCourtDimensionsPressed()
+function playSound(sourceBase,duration)
 {
-    console.log("came inside showCourtDimensionsPressed ...")
-}
+    var audio = document.createElement('audio');
+    var source = document.createElement('source');
+    var sourceFile;
 
-function checkBoxClicked()
-{
-    console.log("checkBox clicked ...")
+    //source.src = '../sounds/loadingshuffle1.mp3';
+    if(duration > 0)
+        sourceFile = sourceBase + duration.toString() +  '.mp3';
+    else
+        sourceFile = sourceBase;
+
+    source.src = sourceFile;
+    audio.appendChild(source);
+    audio.play();
 }
