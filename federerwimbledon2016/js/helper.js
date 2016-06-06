@@ -3,18 +3,18 @@
  */
 
 /*Creating serve json input
- -------------------------
+-------------------------
 
- 1.Get data
- wimbledon2012 = "20120706-M-Wimbledon-SF-Roger_Federer-Novak_Djokovic"
- wimbledon2015 = "20150712-M-Wimbledon-F-Roger_Federer-Novak_Djokovic"
+1.Get data
+wimbledon2012 = "20120706-M-Wimbledon-SF-Roger_Federer-Novak_Djokovic"
+wimbledon2015 = "20150712-M-Wimbledon-F-Roger_Federer-Novak_Djokovic"
 
- write.csv(df11[which(df11$match_id == wimbledon2015),],"C:\\Users\\aftab\\Desktop\\2015.csv",row.names=FALSE)
- write.csv(df11[which(df11$match_id == wimbledon2012),],"C:\\Users\\aftab\\Desktop\\2012.csv",row.names=FALSE)
+write.csv(df11[which(df11$match_id == wimbledon2015),],"C:\\Users\\aftab\\Desktop\\2015.csv",row.names=FALSE)
+write.csv(df11[which(df11$match_id == wimbledon2012),],"C:\\Users\\aftab\\Desktop\\2012.csv",row.names=FALSE)
 
- 2.Use the site for conversion
- http://www.convertcsv.com/csv-to-json.htm
- */
+2.Use the site for conversion
+    http://www.convertcsv.com/csv-to-json.htm
+*/
 
 //    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
 //                (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -47,7 +47,7 @@ function updateSelection(selectionmade)
         playerSelection = playerSelection[playerSelection.selectedIndex].value;
         //addTextHelper(0,"serve direction",-12,0,4,true,3,0.1,-Math.PI / 2);
         playSound('../sounds/loadingshuffle',1);
-        addTextHelper(0,playerSelection,-15,0,0,false,4,0.1,-Math.PI / 2,0xf0f8ff);
+        //addTextHelper(0,playerSelection,-15,0,0,false,4,0.1,-Math.PI / 2,0xf0f8ff);
         console.log("playerSelection == "+playerSelection);
     }
 
@@ -67,8 +67,9 @@ function updateSelection(selectionmade)
         /* ad_wide, ad_middle, ad_t, deuce_t, deuce_middle, deuce_wide */
         //if(hasUnderscore(selectionmade) == true)
         //{
-        //console.log("came inside this,selectionmade=="+selectionmade);
+        console.log("came inside this,selectionmade=="+selectionmade);
         serveDirection = selectionmade;
+        //serveDirection = "ad_wide";
 
         //var delimiter = "_";
         ////console.log(playerSelection + "'s " + selectionmade.split(delimiter)[1] + " " + serveSelection + " to the " + selectionmade.split(delimiter)[0] + " side")
@@ -370,15 +371,22 @@ function init()
         playSound('../sounds/loadingshuffle',2);
         addTextHelper(0,"Direction : "+getServeDirectionToAddText(),-40,26-((getCount()-1)*space),0,false,1.8,0.1,0,0xf0f8ff);
         addTextHelper(0,"Serves : "+getNumberOfServesToAddText(serveDirection),-12,26-((getCount()-1)*space),0,false,1.8,0.1,0,0xf0f8ff);
-        addTextHelper(0,"Avg. Height : "+getAverageServeHeightToAddText(),5,26-((getCount()-1)*space),0,false,1.8,0.1,0,0xf0f8ff);
-        addTextHelper(0,"Avg. Speed : "+getAverageServeSpeedToAddText(),23,26-((getCount()-1)*space),0,false,1.8,0.1,0,0xf0f8ff);
+        //addTextHelper(0,"Avg. Height : "+getAverageServeHeightToAddText(),5,26-((getCount()-1)*space),0,false,1.8,0.1,0,0xf0f8ff);
+        //addTextHelper(0,"Avg. Speed : "+getAverageServeSpeedToAddText(),23,26-((getCount()-1)*space),0,false,1.8,0.1,0,0xf0f8ff);
         //console.log("y coordinate == "+22-((getCount()-1)*space));
 
         /* testing the split function */
         //showStripwiseSplit();
 
         /* plot serve trajectory */
+        //updateSelection("ad_wide");
         drawIncrementalTubeAndSphere();
+
+        //serveDirection = "deuce_middle";
+        //drawIncrementalTubeAndSphere();
+
+        //serveDirection = "deuce_t";
+        //drawIncrementalTubeAndSphere();
     }
 
     renderer.render(scene,camera);
@@ -529,7 +537,7 @@ function drawCourt()
     //scene.add(sphere);
 
     //addTextHelper(0,"serve direction",-3,27,0,true,2,0.1,0);
-    addTextHelper(0,"serve direction",-12,0,4,true,3,0.1,-Math.PI / 2,0xf0f8ff);
+    //addTextHelper(0,"serve direction",-12,0,4,true,3,0.1,-Math.PI / 2,0xf0f8ff);
 }
 
 function drawCourtHelper(coordinate1, coordinate2)
@@ -1233,6 +1241,8 @@ function getServeDirectionToAddText()
 
 function getServeCountInDirection(serveDirection)
 {
+    console.log("iinside updateSelection, serveDirection=="+serveDirection);
+
     for(var i = 0; i < JSONobj.length; i++)
     {
         if(JSONobj[i].row == row)
@@ -1251,14 +1261,38 @@ function getNumberOfServesToAddText(serveDirection)
     {
         if(JSONobj[i].row == row)
         {
-            totalServes = JSONobj[i]["ad_wide"] + JSONobj[i]["ad_middle"] + JSONobj[i]["ad_t"]
-                +JSONobj[i]["deuce_t"] + JSONobj[i]["deuce_middle"] + JSONobj[i]["deuce_wide"];
+            if(serveDirection == "ad_wide" || serveDirection == "ad_middle" || serveDirection == "ad_t")
+                totalServes = JSONobj[i]["ad_wide"] + JSONobj[i]["ad_middle"] + JSONobj[i]["ad_t"];
+
+            else if(serveDirection == "deuce_wide" || serveDirection == "deuce_middle" || serveDirection == "deuce_t")
+                totalServes = JSONobj[i]["deuce_t"] + JSONobj[i]["deuce_middle"] + JSONobj[i]["deuce_wide"];
+
             break;
         }
     }
     console.log("numServes=="+numServes);
     console.log("totalServes=="+totalServes);
     return (numServes.toString() + " / " + totalServes.toString());
+}
+
+/* helper function to addText giving serve information, on the number of serves made in that direction */
+function getNumberOfServesToAddText2015(serveDirection)
+{
+    switch(serveDirection)
+    {
+        case "deuce_wide":
+            return "36 / 72";
+        case "deuce_middle":
+            return "7 / 72";
+        case "deuce_t":
+            return "29 / 72";
+        case "ad_wide":
+            return "34 / 69";
+        case "ad_middle":
+            return "7 / 69";
+        case "ad_t":
+            return "28 / 69";
+    }
 }
 
 /* helper function to addText giving serve information, on the average height of serves made in that direction */
@@ -1308,6 +1342,12 @@ function showStripwiseSplit()
         }
     ];
 
+    addTextHelper(0,"2015",-5,0,12,true,5,0.1,-Math.PI / 2);
+    addTextHelper(0,"Wimbledon Finals",-10,0,14,true,2,0.1,-Math.PI / 2);
+
+    addTextHelper(0,"2012",-5,0,-28,true,5,0.1,-Math.PI / 2);
+    addTextHelper(0,"Wimbledon Semi Finals",-10,0,-26,true,2,0.1,-Math.PI / 2);
+
     /* setting the length, width and height of cube */
     for(var i = 0; i <stripData.length;i++)
     {
@@ -1316,18 +1356,33 @@ function showStripwiseSplit()
         var height = 0.1;
         var curveColor = getCurveColor(stripData[i].position);
 
-        var cube = new THREE.Mesh(new THREE.CubeGeometry(width,length,height), new THREE.MeshLambertMaterial({
+        var cube1 = new THREE.Mesh(new THREE.CubeGeometry(width,length,height), new THREE.MeshLambertMaterial({
             color: curveColor,
         }));
 
+        /* cube 2012 */
         /* setting the position of cube */
-        cube.position.x = stripData[i].start + (width/2);
-        cube.position.y = 0;
-        cube.position.z = netLineZ + (length/2);
-        cube.rotation.x = Math.PI / 2;
+        cube1.position.x = stripData[i].start + (width/2);
+        cube1.position.y = 0;
+        cube1.position.z = netLineZ + (length/2);
+        cube1.rotation.x = Math.PI / 2;
 
         /* add cube to scene */
-        scene.add(cube);
+        scene.add(cube1);
+
+        var cube2 = new THREE.Mesh(new THREE.CubeGeometry(width,length,height), new THREE.MeshLambertMaterial({
+            color: curveColor,
+        }));
+
+        /* cube 2015 */
+        /* setting the position of cube */
+        cube2.position.x = stripData[i].start + (width/2);
+        cube2.position.y = 0;
+        cube2.position.z = netLineZ - (length/2);
+        cube2.rotation.x = Math.PI / 2;
+
+        /* add cube to scene */
+        scene.add(cube2);
 
         var textSize = 2;
         var textColor = 0x000000;//black default
@@ -1338,10 +1393,18 @@ function showStripwiseSplit()
         if(stripData[i].position == "deuce_t" || stripData[i].position == "ad_t")
             textColor = 0xffffff;
 
+        /* text 2012 */
         var percentageString = getNumberOfServesToAddText(stripData[i].position);
         console.log("percentageString == "+percentageString);
         var percentage = Math.round((percentageString.split(" / ")[0] / percentageString.split(" / ")[1]) * 100);
         addTextHelper(0,percentage.toString(),stripData[i].start + (width/2) - 1,0,netLineZ - 6,true,textSize,0.1,-Math.PI / 2,textColor);
+        addTextHelper(0,"%",stripData[i].start + (width/2),0,netLineZ - 4,true,textSize,0.1,-Math.PI / 2,textColor);
+
+        /* text 2015 */
+        percentageString = getNumberOfServesToAddText2015(stripData[i].position);
+        console.log("percentageString == "+percentageString);
+        percentage = Math.round((percentageString.split(" / ")[0] / percentageString.split(" / ")[1]) * 100);
+        addTextHelper(0,percentage.toString(),stripData[i].start + (width/2) - 1,0,netLineZ + 6,true,textSize,0.1,-Math.PI / 2,textColor);
         addTextHelper(0,"%",stripData[i].start + (width/2),0,netLineZ - 4,true,textSize,0.1,-Math.PI / 2,textColor);
     }
 }
