@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Tennis</title>
+    <link rel="stylesheet" type="text/css" href="../css/home.css">
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+
+    <!--adding the js libraries-->
+    <!--<script src="../libraries/three.build.min.js"></script>&lt;!&ndash; three.js library working &ndash;&gt;-->
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/three.js/r72/three.min.js"></script>
+    <script src="../libraries/Detector.js"></script><!--to detect WebGL-->
+    <script src="https://dl.dropboxusercontent.com/u/3587259/Code/Threejs/OrbitControls.js"></script><!--to be able to pan and do controls.update-->
+    <script src="../libraries/THREEx.FullScreen.js"></script><!--full screen on pressing 'm'-->
+    <script src="../libraries/THREEx.WindowResize.js"></script><!--window resize-->
+    <script src="../libraries/gastrailjs/TrackballControls.js"></script><!--gas trail-->
+    <script src="../libraries/gastrailjs/dat.gui.min.js"></script> <!-- dashboardish UI -->
+    <script src="../libraries/gastrailjs/GPUParticleSystem.js" charset="utf-8"></script><!-- gas trail I think -->
+    <!--<script src="../libraries/typeface-0.15.js"></script>-->
+    <script src="../fonts/Digital-7_Regular.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.5.1/dat.gui.js"></script>
+    <script src="../libraries/Cloth.js"></script>
+    <!--<script src="../fonts/gentilis_regular.typeface.js"></script>-->
+</head>
+<body>
+
+<div id="title" class="row">
+    <!--<div id="prev">-->
+
+    <!--</div>-->
+    <!--<div class="ball">-->
+    <!--<svg class="ball-svg" viewbox="0 0 100 100" preserveAspectRatio="xMidYMid meet">-->
+    <!--<circle cx="50" cy="50" r="25" />-->
+    <!--</svg>-->
+    <!--</div>-->
+    <div id="tennis">SERVE DIRECTION</div>
+    <!--<div class="ball">-->
+    <!--<svg class="ball-svg" viewbox="0 0 100 100" preserveAspectRatio="xMidYMid meet">-->
+    <!--<circle cx="50" cy="50" r="25" />-->
+    <!--</svg>-->
+    <!--</div>-->
+    <!--<div id="next">-->
+
+    <!--</div>-->
+</div>
+<div id="court" class="row">
+    <div>
+        <p>Upload a csv file</p><br>
+        <input type="file" id="myFile"/>
+        <button type="button" onclick="loadDemoFile()">Load sample file for now!</button>
+    </div>
+    <div>
+        <p>Select player from list</p><br>
+        <select id="playerselect" name="playerselect" onchange="updateSelection('playerSelection')">
+            <option selected="true" style="display:none;">Select player</option>
+            <!--<option value="Marat Safin">Marat Safin</option>-->
+            <!--<option value="Radek Stepanek">Radek Stepanek</option>-->
+        </select>
+    </div>
+    <div>
+        <p>Select type of serve</p><br>
+        <select id="serveselect" name="serveselect" onchange="updateSelection('serveSelection')">
+            <option selected="true" style="display:none;">Select serve</option>
+            <option value="both serves">Total Serves</option>
+            <option value="first serve">First Serve</option>
+            <option value="second serve">Second Serve</option>
+        </select>
+    </div>
+    <div>
+        <button type="button" onclick="updateSelection('deuce_wide')">Deuce Wide</button>
+        <button type="button" onclick="updateSelection('deuce_middle')">Deuce Middle</button>
+        <button type="button" onclick="updateSelection('deuce_t')">Deuce T</button>
+        <p></p>
+        <button type="button" onclick="updateSelection('ad_t')">Ad T</button>
+        <button type="button" onclick="updateSelection('ad_middle')">Ad Middle</button>
+        <button type="button" onclick="updateSelection('ad_wide')">Ad Wide</button>
+        <p></p>
+        <!--<svg id="tennis-court" >-->
+            <!--&lt;!&ndash;6 slices 6 slices 6 slices 6 slices 6 slices 6 slices 6 slices 6 slices 6 slices 6 slices&ndash;&gt;-->
+            <!--&lt;!&ndash;6 slices 6 slices 6 slices 6 slices 6 slices 6 slices 6 slices 6 slices 6 slices 6 slices&ndash;&gt;-->
+            <!--&lt;!&ndash;6 slices 6 slices 6 slices 6 slices 6 slices 6 slices 6 slices 6 slices 6 slices 6 slices        &ndash;&gt;-->
+            <!--<svg onclick="updateSelection('deuce_wide')">-->
+                <!--<rect x="220" y="35" width="10" height="30" />-->
+                <!--<text x="220" y="50" fill="red">W</text>-->
+            <!--</svg>-->
+            <!--<svg onclick="updateSelection('deuce_middle')">-->
+                <!--<rect x="230" y="35" width="15" height="30" />-->
+                <!--<text x="234" y="50" fill="red">B</text>-->
+            <!--</svg>-->
+            <!--<svg onclick="updateSelection('deuce_t')">-->
+                <!--<rect x="245" y="35" width="5" height="30" />-->
+                <!--<text x="244" y="50" fill="red">T</text>-->
+                <!--<text x="220" y="130">Zone selection</text>-->
+            <!--</svg>-->
+
+            <!--<svg onclick="updateSelection('ad_t')">-->
+                <!--<rect x="250" y="35" width="15" height="30" />-->
+                <!--<text x="250" y="50" fill="red">T</text>-->
+            <!--</svg>-->
+            <!--<svg onclick="updateSelection('ad_middle')">-->
+                <!--<rect x="255" y="35" width="15" height="30" />-->
+                <!--<text x="258" y="50" fill="red">B</text>-->
+            <!--</svg>-->
+            <!--<svg onclick="updateSelection('ad_wide')">-->
+                <!--<rect x="270" y="35" width="10" height="30" />-->
+                <!--<text x="269" y="50" fill="red">W</text>-->
+            <!--</svg>-->
+
+            <!--<path d="M210 10 L210 120 L220 120 L220 10 Z" />-->
+            <!--<path d="M210 10 L290 10 Z" />-->
+            <!--<path d="M290 10 L290 120 L280 120 L280 10 Z" />-->
+            <!--<path d="M290 120 L210 120 Z" />-->
+            <!--<path d="M210 65 L290 65 Z" />-->
+            <!--<path d="M210 35 L290 35 Z" />-->
+            <!--<path d="M210 95 L290 95 Z" />-->
+            <!--<path d="M250 35 L250 95 Z" />-->
+
+            <!--<path d="M250 10 L250 15 Z" />-->
+            <!--<path d="M250 120 L250 115 Z" />-->
+        <!--</svg>-->
+    </div>
+
+    <!--<div>-->
+        <!--<svg id="selectionUpdate">-->
+            <!--<path d="M0 0 L0 100 L280 100 L280 0 Z" />-->
+            <!--<text id="updateText" x="80" y="50" font-size="20" font-family="tempus sans itc">Make a selection...</text>-->
+        <!--</svg>-->
+    <!--</div>-->
+    <div>
+        <!--<button id = "visualizeBtn" onclick="visualizeServe()">Visualize serve</button>-->
+        <button id = "visualizeBtn" onclick="init()">Visualize serve</button>
+    </div>
+    <!--<div id="bottom" class="row">-->
+    <!--<div class="ball">-->
+    <!--<svg class="ball-svg" viewbox="0 0 100 100" preserveAspectRatio="xMidYMid meet">-->
+    <!--<circle cx="50" cy="50" r="25" />-->
+    <!--</svg>-->
+    <!--</div>-->
+    <!--<div class="tennis"></div>-->
+    <!--<div class="ball">-->
+    <!--<svg class="ball-svg" viewbox="0 0 100 100" preserveAspectRatio="xMidYMid meet">-->
+    <!--<circle cx="50" cy="50" r="25" />-->
+    <!--</svg>-->
+    <!--</div>-->
+    <!--</div>-->
+    <!--<script type="text/javascript" src="https://code.jquery.com/jquery-2.2.2.min.js"></script>-->
+    <!--<script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>-->
+    <!--<script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>-->
+    <!--<script type="text/javascript" src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>-->
+    <!--<script type="text/javascript" src="js/tennis.js"></script>-->
+    <div id="ThreeJS"></div>
+</div>
+</body>
+<script src="../js/helper.js"></script>
+<script>
+    window.onload = init;
+</script>
+</html>

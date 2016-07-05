@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<input type="button" value="set" onclick="set()">
+<input type="button" value="get" onclick="get()">
+<input type="text" value="nothing yet" id="tb">
+</body>
+<script>
+    function set()
+    {
+        // Storing the data:
+        localStorage.setItem("variableName",1);
+    }
+
+    function get()
+    {
+        // Receiving the data:
+//        localStorage.getItem("variableName");
+        console.log(localStorage.getItem("variableNames"))
+        document.getElementById('tb').value = localStorage.getItem("variableNames");
+    }
+</script>
+</html>

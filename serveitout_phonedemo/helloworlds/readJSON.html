@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <input type="file" id="fileinput" />
+</body>
+<script>
+    // calls the init function when the window is done loading.
+    document.getElementById('fileinput').addEventListener('change', readSingleFile, false);
+    console.log("fileinput activated...");
+
+    function readSingleFile(evt) {
+        console.log("came inside readSingleFile...");
+
+        //Retrieve the first (and only!) File from the FileList object
+        var f = evt.target.files[0];
+
+        if (f) {
+            var r = new FileReader();
+            r.onload = function(e) {
+                var contents = e.target.result;
+                JSONobj = JSON.parse(contents);
+
+                console.log(JSONobj[0]);
+            }
+            r.readAsText(f);
+        } else {
+            alert("Failed to load file");
+        }
+    }
+</script>
+</html>

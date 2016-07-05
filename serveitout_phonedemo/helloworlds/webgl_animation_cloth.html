@@ -1,0 +1,173 @@
+<!--html file-->
+<!--1.simulate( time ); this is the one that give life to the net-->
+<!--2.if ( rotate ) inside the html file causes the camera to go 360-->
+
+<!--js file-->
+<!--1.changing from //var DAMPING = 0.03;-->
+<!--to var DAMPING = 0.3; causes the net to go back and forth cuz of the wind just perfect-->
+<!--2.-->
+
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>three.js webgl - cloth simulation</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	</head>
+
+	<body>
+		<!--<script src="../libraries/three.min.js"></script>-->
+		<script src="http://cdnjs.cloudflare.com/ajax/libs/three.js/r73/three.min.js"></script>
+
+		<script src="../libraries/Detector.js"></script>
+		<script src="../libraries/stats.min.js"></script>
+
+		<script src="../libraries/Cloth.js"></script>
+
+		<script>
+
+			var pins = [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ];
+			var container;
+			var camera, scene, renderer;
+			var clothGeometry;
+
+			drawNet();
+
+			function drawNet()
+			{
+				console.log("came inside drawNet...");
+				netConfig();
+				netAnimate();
+			}
+
+			function netConfig() {
+
+				console.log("inside init...");
+				container = document.createElement( 'div' );
+				document.body.appendChild( container );
+
+				// scene
+
+				scene = new THREE.Scene();
+				scene.fog = new THREE.Fog( 0xcce0ff, 500, 10000 );
+
+				// camera
+
+				camera = new THREE.PerspectiveCamera( 30, window.innerWidth / window.innerHeight, 1, 10000 );
+				camera.position.y = 50;
+				camera.position.z = 1500;
+				scene.add( camera );
+
+				// lights
+
+				var light, materials;
+
+				scene.add( new THREE.AmbientLight( 0x666666 ) );
+
+				light = new THREE.DirectionalLight( 0xdfebff, 1.75 );
+				light.position.set( 50, 200, 100 );
+				light.position.multiplyScalar( 1.3 );
+
+				light.castShadow = true;
+//				light.shadowCameraVisible = true;
+
+				light.shadow.mapSize.width = 1024;
+				light.shadow.mapSize.height = 1024;
+
+				var d = 300;
+
+				light.shadow.camera.left = - d;
+				light.shadow.camera.right = d;
+				light.shadow.camera.top = d;
+				light.shadow.camera.bottom = - d;
+
+				light.shadow.camera.far = 1000;
+
+				scene.add( light );
+
+				// cloth material
+
+				var loader = new THREE.TextureLoader();
+				var clothTexture = loader.load( '../images/circuit_pattern.png' );
+				clothTexture.wrapS = clothTexture.wrapT = THREE.RepeatWrapping;
+				clothTexture.anisotropy = 16;
+
+				var clothMaterial = new THREE.MeshPhongMaterial( {
+					specular: 0x030303,
+					map: clothTexture,
+					side: THREE.DoubleSide,
+					alphaTest: 0.5
+				} );
+
+				// cloth geometry
+				clothGeometry = new THREE.ParametricGeometry( clothFunction, cloth.w, cloth.h );
+				clothGeometry.dynamic = true;
+
+				var uniforms = { texture:  { type: "t", value: clothTexture } };
+
+				// cloth mesh
+
+				object = new THREE.Mesh( clothGeometry, clothMaterial );
+				object.position.set( 0, 0, -10 );
+				object.castShadow = true;
+				scene.add( object );
+
+				object.customDepthMaterial = new THREE.ShaderMaterial( {
+					uniforms: uniforms,
+					side: THREE.DoubleSide
+				} );
+
+				renderer = new THREE.WebGLRenderer( { antialias: true } );
+				renderer.setPixelRatio( window.devicePixelRatio );
+				renderer.setSize( window.innerWidth, window.innerHeight );
+				renderer.setClearColor( scene.fog.color );
+
+				container.appendChild( renderer.domElement );
+
+//				renderer.gammaInput = true;
+//				renderer.gammaOutput = true;
+//
+//				renderer.shadowMap.enabled = true;
+			}
+
+			function netAnimate() {
+
+				requestAnimationFrame( netAnimate );
+
+				var time = Date.now();
+
+				windStrength = Math.cos( time / 7000 ) * 20 + 40;
+				windForce.set( Math.sin( time / 2000 ), Math.cos( time / 3000 ), Math.sin( time / 1000 ) ).normalize().multiplyScalar( windStrength );
+
+				simulate( time );
+				netRender();
+
+			}
+
+			function netRender() {
+
+				var timer = Date.now() * 0.0002;
+
+				var p = cloth.particles;
+
+				for ( var i = 0, il = p.length; i < il; i ++ ) {
+
+					clothGeometry.vertices[ i ].copy( p[ i ].position );
+
+				}
+
+				clothGeometry.computeFaceNormals();
+				clothGeometry.computeVertexNormals();
+
+				clothGeometry.normalsNeedUpdate = true;
+				clothGeometry.verticesNeedUpdate = true;
+
+				camera.lookAt( scene.position );
+
+				renderer.render( scene, camera );
+
+			}
+
+		</script>
+	</body>
+</html>

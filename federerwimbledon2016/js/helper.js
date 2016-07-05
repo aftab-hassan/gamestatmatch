@@ -751,37 +751,37 @@ function drawIncrementalTubeAndSphere()
 
     /* setting XCoordinate based on  serveDirection */
     switch (serveDirection) {
-        case 'ad_wide':
+        case 'deuce_wide':
             XCoordinateStart = -15;
             XCoordinateEnd = -10;
             curveColor = getCurveColor(serveDirection);//alice blue
             curveColorDebug = 'alice blue'
             break;
-        case 'ad_middle':
+        case 'deuce_middle':
             XCoordinateStart = -10;
             XCoordinateEnd = -3;
             curveColor = getCurveColor(serveDirection);//yellow green
             curveColorDebug = 'yellow green'
             break;
-        case 'ad_t':
+        case 'deuce_t':
             XCoordinateStart = -3;
             XCoordinateEnd = 0;
             curveColor = getCurveColor(serveDirection);//red
             curveColorDebug = 'red'
             break;
-        case 'deuce_t':
+        case 'ad_t':
             XCoordinateStart = 0;
             XCoordinateEnd = 3;
             curveColor = getCurveColor(serveDirection);//blue
             curveColorDebug = 'blue'
             break;
-        case 'deuce_middle':
+        case 'ad_middle':
             XCoordinateStart = 3;
             XCoordinateEnd = 10;
             curveColor = getCurveColor(serveDirection);//caramel
             curveColorDebug = 'caramel'
             break;
-        case 'deuce_wide':
+        case 'ad_wide':
             XCoordinateStart = 10;
             XCoordinateEnd = 15;
             curveColor = getCurveColor(serveDirection);//orange
@@ -1311,32 +1311,32 @@ function showStripwiseSplit()
 {
     var stripData = [
         {
-            position : 'ad_wide',
+            position : 'deuce_wide',
             start : -15,
             end : -10,
         },
         {
-            position : 'ad_middle',
+            position : 'deuce_middle',
             start : -10,
             end : -3,
         },
         {
-            position : 'ad_t',
+            position : 'deuce_t',
             start : -3,
             end : 0,
         },
         {
-            position : 'deuce_t',
+            position : 'ad_t',
             start : 0,
             end : 3,
         },
         {
-            position : 'deuce_middle',
+            position : 'ad_middle',
             start : 3,
             end : 10,
         },
         {
-            position : 'deuce_wide',
+            position : 'ad_wide',
             start : 10,
             end : 15,
         }
