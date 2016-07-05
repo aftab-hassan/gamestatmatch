@@ -1380,6 +1380,26 @@ function getNumberOfServesToAddText(serveDirection)
     return (numServes.toString() + " / " + totalServes.toString());
 }
 
+/* helper function to addText giving serve information, on the number of serves made in that direction */
+function getNumberOfServesToAddText2015(serveDirection)
+{
+    switch(serveDirection)
+    {
+        case "deuce_wide":
+            return "36 / 72";
+        case "deuce_middle":
+            return "7 / 72";
+        case "deuce_t":
+            return "29 / 72";
+        case "ad_wide":
+            return "34 / 69";
+        case "ad_middle":
+            return "7 / 69";
+        case "ad_t":
+            return "28 / 69";
+    }
+}
+
 /* helper function to addText giving serve information, on the average height of serves made in that direction */
 function getAverageServeHeightToAddText()
 {
@@ -1427,6 +1447,12 @@ function showStripwiseSplit()
         }
     ];
 
+    addTextHelper(0,"2015",-5,0,12,true,5,0.1,-Math.PI / 2);
+    addTextHelper(0,"Wimbledon Finals",-10,0,14,true,2,0.1,-Math.PI / 2);
+
+    addTextHelper(0,"2012",-5,0,-28,true,5,0.1,-Math.PI / 2);
+    addTextHelper(0,"Wimbledon Semi Finals",-10,0,-26,true,2,0.1,-Math.PI / 2);
+
     /* setting the length, width and height of cube */
     for(var i = 0; i <stripData.length;i++)
     {
@@ -1435,18 +1461,33 @@ function showStripwiseSplit()
         var height = 0.1;
         var curveColor = getCurveColor(stripData[i].position);
 
-        var cube = new THREE.Mesh(new THREE.CubeGeometry(width,length,height), new THREE.MeshLambertMaterial({
+        var cube1 = new THREE.Mesh(new THREE.CubeGeometry(width,length,height), new THREE.MeshLambertMaterial({
             color: curveColor,
         }));
 
+        /* cube 2012 */
         /* setting the position of cube */
-        cube.position.x = stripData[i].start + (width/2);
-        cube.position.y = 0;
-        cube.position.z = netLineZ + (length/2);
-        cube.rotation.x = Math.PI / 2;
+        cube1.position.x = stripData[i].start + (width/2);
+        cube1.position.y = 0;
+        cube1.position.z = netLineZ + (length/2);
+        cube1.rotation.x = Math.PI / 2;
 
         /* add cube to scene */
-        scene.add(cube);
+        scene.add(cube1);
+
+        var cube2 = new THREE.Mesh(new THREE.CubeGeometry(width,length,height), new THREE.MeshLambertMaterial({
+            color: curveColor,
+        }));
+
+        /* cube 2015 */
+        /* setting the position of cube */
+        cube2.position.x = stripData[i].start + (width/2);
+        cube2.position.y = 0;
+        cube2.position.z = netLineZ - (length/2);
+        cube2.rotation.x = Math.PI / 2;
+
+        /* add cube to scene */
+        scene.add(cube2);
 
         var textSize = 2;
         var textColor = 0x000000;//black default
@@ -1457,13 +1498,22 @@ function showStripwiseSplit()
         if(stripData[i].position == "deuce_t" || stripData[i].position == "ad_t")
             textColor = 0xffffff;
 
+        /* text 2012 */
         var percentageString = getNumberOfServesToAddText(stripData[i].position);
         console.log("percentageString == "+percentageString);
         var percentage = Math.round((percentageString.split(" / ")[0] / percentageString.split(" / ")[1]) * 100);
         addTextHelper(0,percentage.toString(),stripData[i].start + (width/2) - 1,0,netLineZ - 6,true,textSize,0.1,-Math.PI / 2,textColor);
         addTextHelper(0,"%",stripData[i].start + (width/2),0,netLineZ - 4,true,textSize,0.1,-Math.PI / 2,textColor);
+
+        /* text 2015 */
+        percentageString = getNumberOfServesToAddText2015(stripData[i].position);
+        console.log("percentageString == "+percentageString);
+        percentage = Math.round((percentageString.split(" / ")[0] / percentageString.split(" / ")[1]) * 100);
+        addTextHelper(0,percentage.toString(),stripData[i].start + (width/2) - 1,0,netLineZ + 6,true,textSize,0.1,-Math.PI / 2,textColor);
+        addTextHelper(0,"%",stripData[i].start + (width/2),0,netLineZ - 4,true,textSize,0.1,-Math.PI / 2,textColor);
     }
 }
+
 
 function showDistanceMarkersOnCourt()
 {
