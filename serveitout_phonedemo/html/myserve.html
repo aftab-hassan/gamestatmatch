@@ -59,23 +59,29 @@
         </select>
     </div>
     <div>
-        <p>Select type of serve</p><br>
-        <select id="serveselect" name="serveselect" onchange="updateSelection('serveSelection')">
-            <option selected="true" style="display:none;">Select serve</option>
-            <option value="both serves">Total Serves</option>
-            <option value="first serve">First Serve</option>
-            <option value="second serve">Second Serve</option>
-        </select>
+        <!--<p>Select type of serve</p><br>-->
+        <!--<select id="serveselect" name="serveselect" onchange="updateSelection('serveSelection')">-->
+            <!--<option selected="true" style="display:none;">Select serve</option>-->
+            <!--<option value="both serves">Total Serves</option>-->
+            <!--<option value="first serve">First Serve</option>-->
+            <!--<option value="second serve">Second Serve</option>-->
+        <!--</select>-->
     </div>
     <div>
-        <button type="button" onclick="updateSelection('deuce_wide')">Deuce Wide</button>
-        <button type="button" onclick="updateSelection('deuce_middle')">Deuce Middle</button>
-        <button type="button" onclick="updateSelection('deuce_t')">Deuce T</button>
-        <p></p>
-        <button type="button" onclick="updateSelection('ad_t')">Ad T</button>
-        <button type="button" onclick="updateSelection('ad_middle')">Ad Middle</button>
-        <button type="button" onclick="updateSelection('ad_wide')">Ad Wide</button>
-        <p></p>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+        <button type="button" style="height:50px;width:80px" onclick="updateSelection('deuce_wide')">Deuce Wide</button>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <!--<button type="button" onclick="updateSelection('deuce_middle')">Deuce Middle</button>-->
+        <!--<p></p>-->
+        <button type="button" style="height:50px;width:80px" onclick="updateSelection('deuce_t')">Deuce T</button>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <!--<button type="button" onclick="updateSelection('ad_t')">Ad T</button>-->
+        <!--<p></p>-->
+        <!--<button type="button" style="height:50px;width:80px" onclick="updateSelection('ad_middle')">Ad Middle</button>-->
+        <button type="button" style="height:50px;width:80px" onclick="updateSelection('ad_wide')">Ad Wide</button>
+        <!--<p></p>-->
         <!--<svg id="tennis-court" >-->
             <!--&lt;!&ndash;6 slices 6 slices 6 slices 6 slices 6 slices 6 slices 6 slices 6 slices 6 slices 6 slices&ndash;&gt;-->
             <!--&lt;!&ndash;6 slices 6 slices 6 slices 6 slices 6 slices 6 slices 6 slices 6 slices 6 slices 6 slices&ndash;&gt;-->
@@ -129,7 +135,7 @@
     <!--</div>-->
     <div>
         <!--<button id = "visualizeBtn" onclick="visualizeServe()">Visualize serve</button>-->
-        <!--<button id = "visualizeBtn" onclick="init()">Visualize serve</button>-->
+        <button id = "visualizeBtn" onclick="init()">Visualize serve</button>
     </div>
     <!--<div id="bottom" class="row">-->
     <!--<div class="ball">-->

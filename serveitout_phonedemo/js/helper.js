@@ -46,20 +46,23 @@ function updateSelection(selectionmade)
         playerIndex = playerSelection[playerSelection.selectedIndex].index;
         playerSelection = playerSelection[playerSelection.selectedIndex].value;
         //addTextHelper(0,"serve direction",-12,0,4,true,3,0.1,-Math.PI / 2);
-        playSound('../sounds/loadingshuffle',1);
+        //playSound('../sounds/loadingshuffle',1);
         addTextHelper(0,playerSelection,-15,0,0,false,4,0.1,-Math.PI / 2,0xf0f8ff);
         console.log("playerSelection == "+playerSelection);
+
+        serveIndex = 2;
+        serveSelection = "first serve";
     }
 
-    /* serveSelection - First serve, Second serve */
-    else if(selectionmade == "serveSelection")
-    {
-        /* first serve, second serve, both serves Selection */
-        serveSelection=document.getElementById("serveselect");
-        serveIndex = serveSelection[serveSelection.selectedIndex].index;
-        serveSelection = serveSelection[serveSelection.selectedIndex].value;
-        console.log("serveSelection == "+serveSelection);
-    }
+    ///* serveSelection - First serve, Second serve */
+    //else if(selectionmade == "serveSelection")
+    //{
+    //    /* first serve, second serve, both serves Selection */
+    //    serveSelection=document.getElementById("serveselect");
+    //    serveIndex = serveSelection[serveSelection.selectedIndex].index;
+    //    serveSelection = serveSelection[serveSelection.selectedIndex].value;
+    //    console.log("serveIndex == "+serveIndex+", serveSelection == "+serveSelection);
+    //}
 
     /* court Position selection*/
     else
@@ -462,8 +465,8 @@ function init()
         document.getElementById("playerselect").disabled=true;
         document.getElementById("playerselect").style="background-color:#d3d3d3";
 
-        document.getElementById("serveselect").disabled=true;
-        document.getElementById("serveselect").style="background-color:#d3d3d3";
+        //document.getElementById("serveselect").disabled=true;
+        //document.getElementById("serveselect").style="background-color:#d3d3d3";
 
         //console.log("count=="+getCount())
         setCount(parseInt(getCount())+1);
@@ -486,7 +489,7 @@ function init()
         scene.add(markerSphere);
 
         //show text
-        playSound('../sounds/loadingshuffle',2);
+        //playSound('../sounds/loadingshuffle',2);
         addTextHelper(0,"Direction : "+getServeDirectionToAddText(),-40,26-((getCount()-1)*space),0,false,1.8,0.1,0,0xf0f8ff);
         addTextHelper(0,"Serves : "+getNumberOfServesToAddText(serveDirection),-12,26-((getCount()-1)*space),0,false,1.8,0.1,0,0xf0f8ff);
         addTextHelper(0,"Avg. Height : "+getAverageServeHeightToAddText(),5,26-((getCount()-1)*space),0,false,1.8,0.1,0,0xf0f8ff);
@@ -857,7 +860,8 @@ function drawIncrementalTubeAndSphere()
     //console.log("serveDirection=="+serveDirection)
     var XCoordinateStart,XCoordinateEnd;
 
-    numServes = getServeCountInDirection(serveDirection)
+    //numServes = getServeCountInDirection(serveDirection)
+    numServes = Math.floor(((Math.random()*(5-2))+2));
     console.log("numServes ==" + numServes);
 
     /* setting XCoordinate based on  serveDirection */
@@ -1238,39 +1242,39 @@ function addTextHelper(textAnimationCount,text,XCoordinate,YCoordinate,ZCoordina
 //        console.log("textAnimationCount=="+textAnimationCount);
 
     /* shuffle and load characters */
-    var textLoadBreakpointsArray = [5,10,15]
-    if(textLoadBreakpointsArray.indexOf(textAnimationCount) > -1)
-    {
-        addText(generateRandomString(text.length),XCoordinate,YCoordinate,ZCoordinate,false,textSize,textHeight,textRotation,textColor)
-    }
+    //var textLoadBreakpointsArray = [5,10,15]
+    //if(textLoadBreakpointsArray.indexOf(textAnimationCount) > -1)
+    //{
+    //    addText(text,XCoordinate,YCoordinate,ZCoordinate,false,textSize,textHeight,textRotation,textColor)
+    //}
 
-    /* blink */
-    var textBlinkBreakpointsArray = [20,35];
-    var blinkDelay = 10;
-    var blinkDisplayNeeded = false;
-    if(textAnimationCount >= textBlinkBreakpointsArray[0] && textAnimationCount < textBlinkBreakpointsArray[textBlinkBreakpointsArray.length - 1])
-    {
-        for(var i = 0;i<textBlinkBreakpointsArray.length;i++)
-        {
-            if( (textAnimationCount - textBlinkBreakpointsArray[i]) >=0 &&
-                (textAnimationCount - textBlinkBreakpointsArray[i]) < blinkDelay)
-            {
-                blinkDisplayNeeded = true;
-                break;
-            }
-        }
-        //console.log("textAnimationCount=="+textAnimationCount+",blinkDisplayNeeded=="+blinkDisplayNeeded+",teed off by"+textBlinkBreakpointsArray[i]);
-        if(blinkDisplayNeeded == true)
-            addText(text,XCoordinate,YCoordinate,ZCoordinate,false,textSize,textHeight,textRotation,textColor)
-        else
-            addText("",XCoordinate,YCoordinate,ZCoordinate,false,textSize,textHeight,textRotation,textColor)
-    }
-
-    /* final persistent display */
-    if(textAnimationCount == textBlinkBreakpointsArray[textBlinkBreakpointsArray.length -1])
+    ///* blink */
+    //var textBlinkBreakpointsArray = [20,35];
+    //var blinkDelay = 10;
+    //var blinkDisplayNeeded = false;
+    //if(textAnimationCount >= textBlinkBreakpointsArray[0] && textAnimationCount < textBlinkBreakpointsArray[textBlinkBreakpointsArray.length - 1])
+    //{
+    //    for(var i = 0;i<textBlinkBreakpointsArray.length;i++)
+    //    {
+    //        if( (textAnimationCount - textBlinkBreakpointsArray[i]) >=0 &&
+    //            (textAnimationCount - textBlinkBreakpointsArray[i]) < blinkDelay)
+    //        {
+    //            blinkDisplayNeeded = true;
+    //            break;
+    //        }
+    //    }
+    //    //console.log("textAnimationCount=="+textAnimationCount+",blinkDisplayNeeded=="+blinkDisplayNeeded+",teed off by"+textBlinkBreakpointsArray[i]);
+    //    if(blinkDisplayNeeded == true)
+    //        addText(text,XCoordinate,YCoordinate,ZCoordinate,false,textSize,textHeight,textRotation,textColor)
+    //    else
+    //        addText("",XCoordinate,YCoordinate,ZCoordinate,false,textSize,textHeight,textRotation,textColor)
+    //}
+    //
+    ///* final persistent display */
+    //if(textAnimationCount == textBlinkBreakpointsArray[textBlinkBreakpointsArray.length -1])
         addText(text,XCoordinate,YCoordinate,ZCoordinate,true,textSize,textHeight,textRotation,textColor)
-
-    requestAnimationFrame( function(){addTextHelper(textAnimationCount+1,text,XCoordinate,YCoordinate,ZCoordinate,persist,textSize,textHeight,textRotation,textColor)} );
+    //
+    //requestAnimationFrame( function(){addTextHelper(textAnimationCount+1,text,XCoordinate,YCoordinate,ZCoordinate,persist,textSize,textHeight,textRotation,textColor)} );
 }
 
 /* adds text given a string */
@@ -1517,7 +1521,7 @@ function showStripwiseSplit()
 
 function showDistanceMarkersOnCourt()
 {
-    playSound('../sounds/loadingshuffle',1);
+    //playSound('../sounds/loadingshuffle',1);
 
     var numMarkingsOnEachSide = 5;
     var markerInterval = (Math.abs(farBaselineZ) - Math.abs(netLineZ))/numMarkingsOnEachSide;
